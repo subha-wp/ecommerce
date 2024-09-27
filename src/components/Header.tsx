@@ -15,7 +15,7 @@ export default function Header({ user }: any) {
     <header className="sticky -top-1 z-50 bg-white shadow-md">
       <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-2xl font-bold">
-          eStore
+          Adda Baji
         </Link>
         <nav className="hidden space-x-4 md:flex">
           <Link href="/" className="text-gray-600 hover:text-gray-900">
