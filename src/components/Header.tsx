@@ -29,12 +29,20 @@ export default function Header({ user }: any) {
           <Link href="/cart">
             <ShoppingCart className="h-6 w-6 text-gray-600" />
           </Link>
-          <Link href="/user/account">
-            <Avatar className="mr-2 h-8 w-8">
-              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
-              <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
-            </Avatar>
-          </Link>
+          {user ? (
+            <Link href="/user/account">
+              <Avatar className="mr-2 h-8 w-8">
+                <AvatarImage src={user?.avatarUrl} alt={user?.displayName} />
+                <AvatarFallback>
+                  {user?.displayName?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <User className="h-6 w-6 text-gray-600" />
+            </Link>
+          )}
           <Button
             variant="ghost"
             size="icon"

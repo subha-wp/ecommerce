@@ -1,5 +1,7 @@
 import { validateRequest } from "@/auth";
+
 import React from "react";
+import Logout from "./Logout";
 
 export default async function page() {
   const { user } = await validateRequest();
@@ -14,6 +16,7 @@ export default async function page() {
           <p>{user?.displayName}</p>
           <p>{user?.username}</p>
         </div>
+        <Logout />
       </div>
     </main>
   );
