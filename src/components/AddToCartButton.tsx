@@ -1,8 +1,8 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { PackagePlus } from "lucide-react";
 
 type Product = {
   id: string;
@@ -27,5 +27,9 @@ export default function AddToCartButton({ product }: { product: Product }) {
     });
   };
 
-  return <Button onClick={handleAddToCart}>Add to Cart</Button>;
+  return (
+    <button onClick={handleAddToCart}>
+      <PackagePlus />
+    </button>
+  );
 }

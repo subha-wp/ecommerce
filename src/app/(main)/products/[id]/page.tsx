@@ -28,12 +28,17 @@ export default async function ProductPage({
             alt={product.title}
             width={500}
             height={500}
-            className="rounded-lg"
+            className="mb-4 h-[300px] w-full rounded object-contain md:h-[500px]"
           />
         </div>
         <div>
           <h1 className="mb-4 text-3xl font-bold">{product.title}</h1>
-          <p className="mb-4 text-2xl font-bold">₹{product.price.toFixed(2)}</p>
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-gray-400 line-through">
+              ₹{product.price}
+            </p>
+            <p className="font-semibold">₹{product.minPrice}</p>
+          </div>
           <Suspense fallback={<div>Loading product details...</div>}>
             <ProductDetails product={product} initialIsFavorite={isFavorite} />
           </Suspense>

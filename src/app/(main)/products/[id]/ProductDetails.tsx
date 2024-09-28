@@ -56,14 +56,14 @@ export default function ProductDetails({
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      toast({
-        title: "Please select a size",
-        description: "You must select a size before adding to cart.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // if (!selectedSize) {
+    //   toast({
+    //     title: "Please select a size",
+    //     description: "You must select a size before adding to cart.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
     addToCart({ ...product, quantity, size: selectedSize });
     toast({
       title: "Added to Cart",
@@ -72,14 +72,14 @@ export default function ProductDetails({
   };
 
   const handleBuyNow = () => {
-    if (!selectedSize) {
-      toast({
-        title: "Please select a size",
-        description: "You must select a size before buying.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // if (!selectedSize) {
+    //   toast({
+    //     title: "Please select a size",
+    //     description: "You must select a size before buying.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
     addToCart({ ...product, quantity, size: selectedSize });
     // Redirect to checkout page
     window.location.href = "/checkout";
@@ -120,7 +120,7 @@ export default function ProductDetails({
   return (
     <div className="relative z-0 pb-16 md:pb-0">
       <div className="mb-4 flex items-center space-x-4">
-        <Select onValueChange={setSelectedSize}>
+        {/* <Select onValueChange={setSelectedSize}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select size" />
           </SelectTrigger>
@@ -131,7 +131,7 @@ export default function ProductDetails({
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
         <div className="flex items-center space-x-2">
           <label htmlFor="quantity" className="text-sm font-medium">
             Quantity:
@@ -158,7 +158,7 @@ export default function ProductDetails({
           </Button>
         </div>
       </div>
-      <div className="absolute right-0 top-0 z-40 mb-4 flex space-x-4">
+      <div className="mb-4 flex space-x-4">
         <Button
           variant="outline"
           size="icon"
@@ -173,7 +173,7 @@ export default function ProductDetails({
           <Share2 className="h-4 w-4" />
         </Button>
       </div>
-      <div className="mt-8">
+      {/* <div className="mt-8">
         <h2 className="mb-2 text-xl font-semibold">Make an Offer</h2>
         <div className="flex space-x-2">
           <Input
@@ -184,7 +184,7 @@ export default function ProductDetails({
           />
           <Button onClick={handleBargain}>Submit Offer</Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

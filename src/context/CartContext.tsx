@@ -6,6 +6,7 @@ type CartItem = {
   id: string;
   title: string;
   price: number;
+  minPrice: number;
   quantity: number;
 };
 
@@ -54,7 +55,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cart.reduce(
+      (total, item) => total + item.minPrice * item.quantity,
+      0,
+    );
   };
 
   return (

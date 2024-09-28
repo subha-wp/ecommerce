@@ -48,10 +48,10 @@ export default function Cart({ user }: any) {
                   <Link href={`/products/${item.id}`}>
                     <TableCell>{item.title}</TableCell>
                   </Link>
-                  <TableCell>₹{item.price.toFixed(2)}</TableCell>
+                  <TableCell>₹{item.minPrice.toFixed(2)}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>
-                    ₹{(item.price * item.quantity).toFixed(2)}
+                    ₹{(item.minPrice * item.quantity).toFixed(2)}
                   </TableCell>
                   <TableCell>
                     <Button

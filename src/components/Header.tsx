@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import logo from "@/assets/adda-logo.png";
+import Image from "next/image";
 
 export default function Header({ user }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,10 +14,10 @@ export default function Header({ user }: any) {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="sticky -top-1 z-50 bg-white shadow-md">
+    <header className="sticky -top-1 z-40 bg-white shadow-md">
       <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-2xl font-bold">
-          Adda Baji
+          <Image src={logo} alt="Adda Baji" height={50} width={130} />
         </Link>
         <nav className="hidden space-x-4 md:flex">
           <Link href="/" className="text-gray-600 hover:text-gray-900">

@@ -37,7 +37,7 @@ export default function AdminProductsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Admin - Manage Products</h1>
-        <Link href="/admin/add-product">
+        <Link href="/next-admin/add-product">
           <Button>Add New Product</Button>
         </Link>
       </div>

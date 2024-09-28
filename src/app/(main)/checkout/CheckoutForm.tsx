@@ -55,7 +55,10 @@ export default function CheckoutForm({ user }: any) {
   const [upiLink, setUpiLink] = useState("");
 
   useEffect(() => {
-    const sum = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const sum = cart.reduce(
+      (acc, item) => acc + item.minPrice * item.quantity,
+      0,
+    );
     setTotalAmount(sum);
   }, [cart]);
 
@@ -82,7 +85,7 @@ export default function CheckoutForm({ user }: any) {
 
   const handleUPIPayment = () => {
     const amount = getFinalAmount().toFixed(2);
-    const upiLink = `upi://pay?pa=${UPI_ID}&pn=YourStoreName&am=${amount}&cu=INR&tn=Order%20Payment`;
+    const upiLink = `upi://pay?pa=${UPI_ID}&pn=AddaBaji&am=${amount}&cu=INR&tn=Order%20Payment`;
     setUpiLink(upiLink);
 
     if (isMobile()) {
@@ -113,7 +116,7 @@ export default function CheckoutForm({ user }: any) {
           items: cart.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
-            price: item.price,
+            price: item.minPrice,
           })),
           ...formData,
           totalAmount: getFinalAmount(),
