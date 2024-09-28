@@ -10,7 +10,7 @@ export default async function AdminProductsPage() {
     <div className="w-full">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Products</h1>
-        <Link href="/admin/products/new">
+        <Link href="/next-admin/products/new">
           <Button>Add New Product</Button>
         </Link>
       </div>
