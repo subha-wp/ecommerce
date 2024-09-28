@@ -62,6 +62,7 @@ model Order {
   mobileNumber  String?
   address       String?
   city          String?
+  status        String?   @default("pending")
   country       String
   zipCode       String
   createdAt     DateTime @default(now())
