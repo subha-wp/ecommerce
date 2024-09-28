@@ -1,6 +1,8 @@
 import { validateRequest } from "@/auth";
 import { redirect } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
+import { SidebarProvider } from "./SidebarContext";
+import AdminMainContent from "./AdminMainContent";
 
 export default async function AdminLayout({
   children,
@@ -12,11 +14,11 @@ export default async function AdminLayout({
     return redirect("/login");
   }
   return (
-    <div className="flex h-screen w-full bg-gray-100">
-      <AdminSidebar />
-      <main className="w-full flex-1 overflow-y-auto overflow-x-hidden bg-gray-100">
-        <div className="px-6 py-8">{children}</div>
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-gray-100">
+        <AdminSidebar />
+        <AdminMainContent>{children}</AdminMainContent>
+      </div>
+    </SidebarProvider>
   );
 }
