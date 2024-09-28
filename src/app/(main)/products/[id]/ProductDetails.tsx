@@ -35,35 +35,27 @@ export default function ProductDetails({
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [offerPrice, setOfferPrice] = useState("");
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
-  const handleBargain = () => {
-    const offer = parseFloat(offerPrice);
-    if (offer >= product.minPrice) {
-      toast({
-        title: "Offer Accepted!",
-        description: "You can now place your order at this price.",
-      });
-    } else {
-      toast({
-        title: "Offer Rejected",
-        description: "Sorry, we cannot accept this offer.",
-        variant: "destructive",
-      });
-    }
-  };
+  // const handleBargain = () => {
+  //   const offer = parseFloat(offerPrice);
+  //   if (offer >= product.minPrice) {
+  //     toast({
+  //       title: "Offer Accepted!",
+  //       description: "You can now place your order at this price.",
+  //     });
+  //   } else {
+  //     toast({
+  //       title: "Offer Rejected",
+  //       description: "Sorry, we cannot accept this offer.",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   const handleAddToCart = () => {
-    // if (!selectedSize) {
-    //   toast({
-    //     title: "Please select a size",
-    //     description: "You must select a size before adding to cart.",
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
     addToCart({ ...product, quantity, size: selectedSize });
     toast({
       title: "Added to Cart",
@@ -72,14 +64,6 @@ export default function ProductDetails({
   };
 
   const handleBuyNow = () => {
-    // if (!selectedSize) {
-    //   toast({
-    //     title: "Please select a size",
-    //     description: "You must select a size before buying.",
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
     addToCart({ ...product, quantity, size: selectedSize });
     // Redirect to checkout page
     window.location.href = "/checkout";
@@ -120,18 +104,20 @@ export default function ProductDetails({
   return (
     <div className="relative z-0 pb-16 md:pb-0">
       <div className="mb-4 flex items-center space-x-4">
-        {/* <Select onValueChange={setSelectedSize}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select size" />
-          </SelectTrigger>
-          <SelectContent>
-            {product.sizes.map((size) => (
-              <SelectItem key={size} value={size}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select> */}
+        {product.sizes.length > 0 && (
+          <Select onValueChange={setSelectedSize}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select size" />
+            </SelectTrigger>
+            <SelectContent>
+              {product.sizes.map((size) => (
+                <SelectItem key={size} value={size}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <div className="flex items-center space-x-2">
           <label htmlFor="quantity" className="text-sm font-medium">
             Quantity:
@@ -173,18 +159,20 @@ export default function ProductDetails({
           <Share2 className="h-4 w-4" />
         </Button>
       </div>
-      {/* <div className="mt-8">
-        <h2 className="mb-2 text-xl font-semibold">Make an Offer</h2>
-        <div className="flex space-x-2">
-          <Input
-            type="number"
-            placeholder="Enter your offer"
-            value={offerPrice}
-            onChange={(e) => setOfferPrice(e.target.value)}
-          />
-          <Button onClick={handleBargain}>Submit Offer</Button>
+      {/* {product.minPrice < product.price && (
+        <div className="mt-8">
+          <h2 className="mb-2 text-xl font-semibold">Make an Offer</h2>
+          <div className="flex space-x-2">
+            <Input
+              type="number"
+              placeholder="Enter your offer"
+              value={offerPrice}
+              onChange={(e) => setOfferPrice(e.target.value)}
+            />
+            <Button onClick={handleBargain}>Submit Offer</Button>
+          </div>
         </div>
-      </div> */}
+      )} */}
     </div>
   );
 }
