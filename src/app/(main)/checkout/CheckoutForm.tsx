@@ -18,7 +18,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-const UPI_ID = "7001070713@okbizaxis";
+const UPI_ID = "subhapa98@okhdfcbank";
 const WHATSAPP_NUMBER = "9531699377"; // Replace with your actual WhatsApp number
 
 const WhatsAppSupport = () => (
