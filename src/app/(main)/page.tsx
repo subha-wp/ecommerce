@@ -8,6 +8,7 @@ export default async function Home() {
   return (
     <main className="container mx-auto max-w-7xl p-2">
       <HeroSection />
+      <ScrollingText text="10% instant discount on prepaid orders | COD not available during durga puja" />
       <div className="my-4">
         <p className="text-center text-2xl font-bold">Products</p>
       </div>
@@ -19,3 +20,13 @@ export default async function Home() {
     </main>
   );
 }
+
+const ScrollingText: React.FC<{ text: string }> = ({ text }) => {
+  return (
+    <div className="my-4 overflow-hidden whitespace-nowrap">
+      <div className="animate-scroll-right inline-block">
+        <span className="uppercase">{text}</span>
+      </div>
+    </div>
+  );
+};

@@ -118,6 +118,15 @@ const config: Config = {
           },
         },
       },
+      keyframes: {
+        "scroll-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+      animation: {
+        "scroll-right": "scroll-right 20s linear infinite",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
