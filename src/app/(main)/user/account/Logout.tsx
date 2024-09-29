@@ -5,5 +5,5 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 
 export default function Logout() {
-  return <Button onClick={() => logout()}>Logout Button</Button>;
+  return <Button onClick={() => logout()}>Logout</Button>;
 }

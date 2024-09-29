@@ -13,9 +13,21 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Function to get tomorrow's date
+const getTomorrowDate = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 export default function Cart({ user }: any) {
   const { cart, removeFromCart, clearCart, getCartTotal } = useCart();
   const router = useRouter();
+  const expectedDeliveryDate = getTomorrowDate();
 
   const handleCheckout = () => {
     if (!user) {
@@ -72,6 +84,9 @@ export default function Cart({ user }: any) {
             <div className="text-xl font-semibold">
               Total: ₹{getCartTotal().toFixed(2)}
             </div>
+          </div>
+          <div className="mt-4 text-right text-green-500">
+            Expected Delivery: {expectedDeliveryDate}
           </div>
           <div className="mt-8 text-right">
             <Button size="lg" onClick={handleCheckout}>

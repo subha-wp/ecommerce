@@ -104,7 +104,7 @@ export default function ProductDetails({
   return (
     <div className="relative z-0 pb-16 md:pb-0">
       <div className="mb-4 flex items-center space-x-4">
-        {product.sizes.length > 0 && (
+        {/* {product.sizes.length > 0 && (
           <Select onValueChange={setSelectedSize}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select size" />
@@ -117,7 +117,8 @@ export default function ProductDetails({
               ))}
             </SelectContent>
           </Select>
-        )}
+        )} */}
+
         <div className="flex items-center space-x-2">
           <label htmlFor="quantity" className="text-sm font-medium">
             Quantity:
@@ -134,6 +135,7 @@ export default function ProductDetails({
           />
         </div>
       </div>
+
       <div className="fixed bottom-0 left-0 right-0 z-30 bg-white p-2 md:static md:bg-transparent md:p-0">
         <div className="flex space-x-4 md:py-2">
           <Button onClick={handleAddToCart} className="flex-1">

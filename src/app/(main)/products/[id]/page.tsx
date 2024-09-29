@@ -39,6 +39,9 @@ export default async function ProductPage({
             </p>
             <p className="font-semibold">₹{product.minPrice}</p>
           </div>
+          <p className="py-2 text-sm text-green-500">
+            *Next Day Delivery all over West Bengal
+          </p>
           <Suspense fallback={<div>Loading product details...</div>}>
             <ProductDetails product={product} initialIsFavorite={isFavorite} />
           </Suspense>

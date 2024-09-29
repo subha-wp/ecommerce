@@ -14,7 +14,6 @@ export default async function page() {
           <p className="text-sm text-gray-500">Manage your account settings</p>
           <p>{user?.email}</p>
           <p>{user?.displayName}</p>
-          <p>{user?.username}</p>
         </div>
         <Logout />
       </div>
