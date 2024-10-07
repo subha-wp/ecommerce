@@ -12,7 +12,7 @@ import Image from "next/image";
 
 const images = [
   "https://gist.github.com/user-attachments/assets/15fd1eb6-86f9-4cef-8704-925f28538974",
-  "https://gist.github.com/user-attachments/assets/c98ceb9f-5a44-4c79-91ae-986762f53fa9",
+  // "https://gist.github.com/user-attachments/assets/c98ceb9f-5a44-4c79-91ae-986762f53fa9",
 ];
 
 const HeroSection: React.FC = () => {
