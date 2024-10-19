@@ -15,9 +15,10 @@ export default function Header({ user }: any) {
 
   return (
     <header className="sticky -top-1 z-40 bg-white shadow-md">
-      <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-2xl font-bold">
-          <Image src={logo} alt="Adda Baji" height={50} width={50} />
+      <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-1">
+        <Link href="/" className="border p-1 text-xl font-bold">
+          {/* <Image src={logo} alt="Adda Baji" height={50} width={50} /> */}
+          <p>CHIN TAPAK</p>
         </Link>
         <nav className="hidden space-x-4 md:flex">
           <Link href="/" className="text-gray-600 hover:text-gray-900">
