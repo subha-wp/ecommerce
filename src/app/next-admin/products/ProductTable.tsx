@@ -15,14 +15,17 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
 type Product = {
-  image: string;
   id: string;
-  title: string;
-  category: string;
-  subcategory: string;
+  createdAt: Date;
+  updatedAt: Date;
   price: number;
-  minPrice: number;
+  title: string;
   description: string;
+  minPrice: number;
+  sizes: string[];
+  image: string;
+  category: string;
+  subcategory: string | null;
 };
 
 export default function ProductTable({
