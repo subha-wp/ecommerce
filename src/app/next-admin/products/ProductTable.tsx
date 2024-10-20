@@ -18,6 +18,8 @@ type Product = {
   image: string;
   id: string;
   title: string;
+  category: string;
+  subcategory: string;
   price: number;
   minPrice: number;
   description: string;
@@ -65,6 +67,8 @@ export default function ProductTable({
         <TableRow>
           <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead>Subcategory</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>Min Price</TableHead>
           <TableHead>Description</TableHead>
@@ -83,7 +87,9 @@ export default function ProductTable({
                 className="h-10 w-10 rounded object-contain"
               />
             </TableCell>
-            <TableCell>{product.title}</TableCell>
+            <TableCell>{product.title.substring(0, 50)}...</TableCell>
+            <TableCell>{product.category}</TableCell>
+            <TableCell>{product.subcategory}</TableCell>
             <TableCell>₹{product.price.toFixed(2)}</TableCell>
             <TableCell>₹{product.minPrice.toFixed(2)}</TableCell>
             <TableCell>{product.description.substring(0, 50)}...</TableCell>

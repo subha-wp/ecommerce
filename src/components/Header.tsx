@@ -5,8 +5,15 @@ import Link from "next/link";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import logo from "@/assets/jaldhara-logo.png";
-import Image from "next/image";
+
+const categories = [
+  {
+    name: "Electronics",
+    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
+  },
+  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
+  { name: "Home Appliances", subcategories: ["Furniture", "Decor", "Kitchen"] },
+];
 
 export default function Header({ user }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,16 +24,30 @@ export default function Header({ user }: any) {
     <header className="sticky -top-1 z-40 bg-white shadow-md">
       <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-1">
         <Link href="/" className="border p-1 text-xl font-bold">
-          {/* <Image src={logo} alt="Adda Baji" height={50} width={50} /> */}
           <p>CHIN TAPAK</p>
         </Link>
         <nav className="hidden space-x-4 md:flex">
-          <Link href="/" className="text-gray-600 hover:text-gray-900">
-            Home
-          </Link>
-          <Link href="/products" className="text-gray-600 hover:text-gray-900">
-            Products
-          </Link>
+          {categories.map((category) => (
+            <div key={category.name} className="group relative">
+              <Link
+                href={`/products?category=${category.name}`}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                {category.name}
+              </Link>
+              <div className="invisible absolute left-0 mt-2 w-48 rounded-md bg-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100">
+                {category.subcategories.map((subcategory) => (
+                  <Link
+                    key={subcategory}
+                    href={`/products?category=${category.name}&subcategory=${subcategory}`}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {subcategory}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </nav>
         <div className="flex items-center space-x-4">
           <Link href="/cart">
@@ -70,13 +91,27 @@ export default function Header({ user }: any) {
             >
               Home
             </Link>
-            <Link
-              href="/products"
-              className="text-gray-600 hover:text-gray-900"
-              onClick={toggleMenu}
-            >
-              Products
-            </Link>
+            {categories.map((category) => (
+              <div key={category.name} className="space-y-2">
+                <Link
+                  href={`/products?category=${category.name}`}
+                  className="font-semibold text-gray-600 hover:text-gray-900"
+                  onClick={toggleMenu}
+                >
+                  {category.name}
+                </Link>
+                {category.subcategories.map((subcategory) => (
+                  <Link
+                    key={subcategory}
+                    href={`/products?category=${category.name}&subcategory=${subcategory}`}
+                    className="block pl-4 text-sm text-gray-600 hover:text-gray-900"
+                    onClick={toggleMenu}
+                  >
+                    {subcategory}
+                  </Link>
+                ))}
+              </div>
+            ))}
           </nav>
         </div>
       )}

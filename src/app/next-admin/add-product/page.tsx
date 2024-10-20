@@ -4,13 +4,26 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const categories = [
+  {
+    name: "Electronics",
+    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
+  },
+  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
+  { name: "Home", subcategories: ["Furniture", "Decor", "Kitchen"] },
+];
 
 export default function AddProductPage() {
-  const router = useRouter();
-  const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -18,19 +31,27 @@ export default function AddProductPage() {
     minPrice: "",
     sizes: "",
     image: "",
+    category: "",
+    subcategory: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const handleInputChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetch("/api/products", {
@@ -50,10 +71,9 @@ export default function AddProductPage() {
         throw new Error("Failed to add product");
       }
 
-      const product = await response.json();
       toast({
-        title: "Product Added",
-        description: `${product.title} has been added successfully.`,
+        title: "Product added",
+        description: "The product has been successfully added.",
       });
       router.push("/next-admin/products");
     } catch (error) {
@@ -64,85 +84,165 @@ export default function AddProductPage() {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Add New Product</h1>
-      <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl p-4">
+      <h1 className="mb-4 text-2xl font-bold">Add New Product</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="title">Title</Label>
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Title
+          </label>
           <Input
+            type="text"
             id="title"
             name="title"
             value={formData.title}
-            onChange={handleInputChange}
+            onChange={handleChange}
             required
           />
         </div>
         <div>
-          <Label htmlFor="description">Description</Label>
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Description
+          </label>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
-            onChange={handleInputChange}
+            onChange={handleChange}
             required
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="minPrice">Minimum Price</Label>
-            <Input
-              id="minPrice"
-              name="minPrice"
-              type="number"
-              step="0.01"
-              value={formData.minPrice}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        <div>
+          <label
+            htmlFor="price"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Price
+          </label>
+          <Input
+            type="number"
+            id="price"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            required
+            min="0"
+            step="0.01"
+          />
         </div>
         <div>
-          <Label htmlFor="sizes">Sizes (comma-separated)</Label>
+          <label
+            htmlFor="minPrice"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Minimum Price
+          </label>
           <Input
+            type="number"
+            id="minPrice"
+            name="minPrice"
+            value={formData.minPrice}
+            onChange={handleChange}
+            required
+            min="0"
+            step="0.01"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="sizes"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Sizes (comma-separated)
+          </label>
+          <Input
+            type="text"
             id="sizes"
             name="sizes"
             value={formData.sizes}
-            onChange={handleInputChange}
-            placeholder="S, M, L, XL"
+            onChange={handleChange}
             required
           />
         </div>
         <div>
-          <Label htmlFor="image">Image URL</Label>
+          <label
+            htmlFor="image"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Image URL
+          </label>
           <Input
+            type="url"
             id="image"
             name="image"
-            type="url"
             value={formData.image}
-            onChange={handleInputChange}
-            placeholder="https://example.com/image.jpg"
+            onChange={handleChange}
             required
           />
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Adding Product..." : "Add Product"}
+        <div>
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Category
+          </label>
+          <Select
+            onValueChange={(value) => handleSelectChange("category", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.name} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {formData.category && (
+          <div>
+            <label
+              htmlFor="subcategory"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Subcategory
+            </label>
+            <Select
+              onValueChange={(value) =>
+                handleSelectChange("subcategory", value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a subcategory" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories
+                  .find((cat) => cat.name === formData.category)
+                  ?.subcategories.map((subcat) => (
+                    <SelectItem key={subcat} value={subcat}>
+                      {subcat}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        <Button type="submit" disabled={loading}>
+          {loading ? "Adding..." : "Add Product"}
         </Button>
       </form>
     </div>

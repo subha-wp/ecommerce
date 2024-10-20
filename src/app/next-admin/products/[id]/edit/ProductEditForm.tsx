@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Product = {
   id: string;
@@ -15,7 +22,18 @@ type Product = {
   minPrice: number;
   sizes: string[];
   image: string;
+  category: string;
+  subcategory: string | null;
 };
+
+const categories = [
+  {
+    name: "Electronics",
+    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
+  },
+  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
+  { name: "Home", subcategories: ["Furniture", "Decor", "Kitchen"] },
+];
 
 export default function ProductEditForm({ product }: { product: Product }) {
   const [formData, setFormData] = useState(product);
@@ -32,6 +50,10 @@ export default function ProductEditForm({ product }: { product: Product }) {
   const handleSizesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const sizes = e.target.value.split(",").map((size) => size.trim());
     setFormData((prev) => ({ ...prev, sizes }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -165,6 +187,54 @@ export default function ProductEditForm({ product }: { product: Product }) {
           onChange={handleChange}
           required
         />
+      </div>
+      <div>
+        <label
+          htmlFor="category"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Category
+        </label>
+        <Select
+          onValueChange={(value) => handleSelectChange("category", value)}
+          defaultValue={formData.category}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category) => (
+              <SelectItem key={category.name} value={category.name}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label
+          htmlFor="subcategory"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Subcategory
+        </label>
+        <Select
+          onValueChange={(value) => handleSelectChange("subcategory", value)}
+          defaultValue={formData.subcategory || undefined}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a subcategory" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories
+              .find((cat) => cat.name === formData.category)
+              ?.subcategories.map((subcat) => (
+                <SelectItem key={subcat} value={subcat}>
+                  {subcat}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
       </div>
       <Button type="submit">Update Product</Button>
     </form>
