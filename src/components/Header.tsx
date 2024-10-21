@@ -35,7 +35,7 @@ export default function Header({ user }: any) {
 
   return (
     <header
-      className={`z-40 bg-white shadow-md transition-all duration-300 ${isSticky ? "sticky top-0" : ""}`}
+      className={`z-50 bg-white shadow-md transition-all duration-300 ${isSticky ? "sticky top-0" : ""}`}
     >
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <div className="flex w-full items-center justify-between">
@@ -49,7 +49,7 @@ export default function Header({ user }: any) {
                   {category.name}
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
-                <div className="invisible absolute left-0 mt-2 w-48 rounded-md bg-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100">
+                <div className="invisible absolute left-0 z-50 mt-2 w-48 rounded-md bg-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100">
                   {category.subcategories.map((subcategory) => (
                     <Link
                       key={subcategory}
