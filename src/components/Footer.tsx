@@ -10,8 +10,8 @@ const Footer = () => {
   return (
     <footer className="bg-black p-4 text-white">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex items-center justify-between">
-          <ul className="flex space-x-4">
+        <div className="items-center justify-between md:flex">
+          <ul className="md:flex md:space-x-4">
             <li>
               <Link href="/privacy-policy">Privacy Policy</Link>
             </li>
@@ -31,7 +31,7 @@ const Footer = () => {
               <Link href="/contact">Contact</Link>
             </li>
           </ul>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 pt-2">
             <Image
               src={visa}
               width={35}

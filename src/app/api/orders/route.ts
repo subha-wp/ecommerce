@@ -1,28 +1,48 @@
-import { NextResponse } from "next/server";
-import prisma from "../../../lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import { validateRequest } from "@/auth";
 
-export async function POST(req: Request) {
+const prisma = new PrismaClient();
+
+export async function POST(req: NextRequest) {
   try {
-    const { userId, items, name, email, mobileNumber, address, city, zipCode } =
-      await req.json();
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { addressId, items } = await req.json();
+
+    // Verify that the address belongs to the user
+    const address = await prisma.address.findUnique({
+      where: { id: addressId, userId: user.id },
+    });
+
+    if (!address) {
+      return NextResponse.json({ error: "Invalid address" }, { status: 400 });
+    }
 
     const order = await prisma.order.create({
       data: {
-        userId,
-        name,
-        email,
-        mobileNumber,
-        address,
-        city,
-        country: "in",
-        zipCode,
+        userId: user.id,
+        addressId: address.id,
         items: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-          })),
+          create: items.map(
+            (item: { productId: string; quantity: number; price: number }) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+            }),
+          ),
         },
+      },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+        address: true,
       },
     });
 
@@ -36,30 +56,29 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 },
-      );
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const orders = await prisma.order.findMany({
-      where: { userId },
+      where: { userId: user.id },
       include: {
         items: {
           include: {
             product: true,
           },
         },
+        address: true,
       },
+      orderBy: { createdAt: "desc" },
     });
+
     return NextResponse.json(orders);
   } catch (error) {
+    console.error("Error fetching orders:", error);
     return NextResponse.json(
       { error: "Failed to fetch orders" },
       { status: 500 },

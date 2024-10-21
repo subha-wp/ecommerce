@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
@@ -17,9 +15,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const UPI_ID = "amzn0013009269@apl";
-const WHATSAPP_NUMBER = "9531699377"; // Replace with your actual WhatsApp number
+const WHATSAPP_NUMBER = "9531699377";
 
 const WhatsAppSupport = () => (
   <div className="mt-4 text-center">
@@ -37,18 +42,29 @@ const WhatsAppSupport = () => (
   </div>
 );
 
-export default function CheckoutForm({ user }: any) {
+type Address = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+};
+
+export default function CheckoutForm({
+  user,
+  addresses,
+}: {
+  user: any;
+  addresses: Address[];
+}) {
   const { cart, clearCart } = useCart();
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    mobileNumber: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    paymentMode: "COD",
-  });
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [paymentMode, setPaymentMode] = useState("COD");
   const [totalAmount, setTotalAmount] = useState(0);
   const router = useRouter();
   const [isUPIDialogOpen, setIsUPIDialogOpen] = useState(false);
@@ -62,16 +78,12 @@ export default function CheckoutForm({ user }: any) {
     setTotalAmount(sum);
   }, [cart]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handlePaymentModeChange = (value: string) => {
-    setFormData({ ...formData, paymentMode: value });
+    setPaymentMode(value);
   };
 
   const getFinalAmount = () => {
-    return formData.paymentMode === "UPI" ? totalAmount * 0.9 : totalAmount;
+    return paymentMode === "UPI" ? totalAmount * 0.9 : totalAmount;
   };
 
   const isMobile = () => {
@@ -91,13 +103,13 @@ export default function CheckoutForm({ user }: any) {
     if (isMobile()) {
       window.location.href = upiLink;
     } else {
-      // setIsUPIDialogOpen(true);
+      setIsUPIDialogOpen(true);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.paymentMode === "UPI") {
+    if (paymentMode === "UPI") {
       handleUPIPayment();
     } else {
       await placeOrder();
@@ -112,13 +124,13 @@ export default function CheckoutForm({ user }: any) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id,
+          addressId: selectedAddressId,
           items: cart.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
             price: item.minPrice,
           })),
-          ...formData,
+          paymentMode,
           totalAmount: getFinalAmount(),
         }),
       });
@@ -147,107 +159,63 @@ export default function CheckoutForm({ user }: any) {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="mobileNumber">Mobile Number</Label>
-            <Input
-              id="mobileNumber"
-              name="mobileNumber"
-              type="tel"
-              value={formData.mobileNumber}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="city">City</Label>
-            <Input
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="zipCode">Zip Code</Label>
-            <Input
-              id="zipCode"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label>Payment Mode</Label>
-            <RadioGroup
-              value={formData.paymentMode}
-              onValueChange={handlePaymentModeChange}
-              className="mt-2 flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="UPI" id="upi" />
-                <Label htmlFor="upi">
-                  UPI <span className="text-green-400">(10% off)</span>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="COD" id="cod" />
-                <Label htmlFor="cod">Cash on Delivery</Label>
-              </div>
-            </RadioGroup>
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <Label htmlFor="address">Select Address</Label>
+          <Select
+            value={selectedAddressId}
+            onValueChange={(value) => setSelectedAddressId(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select an address" />
+            </SelectTrigger>
+            <SelectContent>
+              {addresses.map((address) => (
+                <SelectItem key={address.id} value={address.id}>
+                  {address.name}, {address.addressLine1}, {address.city},{" "}
+                  {address.state}, {address.zipCode}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-          <div>
-            <Label>Total Amount</Label>
-            <p className="text-lg font-semibold">
-              ₹{getFinalAmount().toFixed(2)}
-              {formData.paymentMode === "UPI" && (
-                <span className="ml-2 text-sm text-green-500">
-                  (10% discount applied)
-                </span>
-              )}
-            </p>
-          </div>
+        <div>
+          <Label>Payment Mode</Label>
+          <RadioGroup
+            value={paymentMode}
+            onValueChange={handlePaymentModeChange}
+            className="mt-2 flex space-x-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="UPI" id="upi" />
+              <Label htmlFor="upi">
+                UPI <span className="text-green-400">(10% off)</span>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="COD" id="cod" />
+              <Label htmlFor="cod">Cash on Delivery</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div>
+          <Label>Total Amount</Label>
+          <p className="text-lg font-semibold">
+            ₹{getFinalAmount().toFixed(2)}
+            {paymentMode === "UPI" && (
+              <span className="ml-2 text-sm text-green-500">
+                (10% discount applied)
+              </span>
+            )}
+          </p>
         </div>
 
         <WhatsAppSupport />
 
-        <Button type="submit" className="mt-4 w-full">
-          {formData.paymentMode === "UPI" ? "Pay with UPI" : "Place Order"}
+        <Button type="submit" className="w-full">
+          {paymentMode === "UPI" ? "Pay with UPI" : "Place Order"}
         </Button>
       </form>
 

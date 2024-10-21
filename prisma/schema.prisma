@@ -1,30 +1,26 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// prisma/schema.prisma
 datasource db {
   provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
-  // uncomment next line if you use Prisma <5.10
-  // directUrl = env("DATABASE_URL_UNPOOLED")
+  url       = env("DATABASE_URL")
 }
 
 model User {
-  id                    String         @id
-  username              String         @unique
-  displayName           String
-  email                 String?        @unique
-  passwordHash          String?
-  googleId              String?        @unique
-  avatarUrl             String?
-  bio                   String?
-  sessions              Session[]
-  orders                Order[]
-  favorites             Favorite[]
-
-  createdAt DateTime @default(now())
+  id            String    @id
+  username      String    @unique
+  displayName   String
+  email         String?   @unique
+  passwordHash  String?
+  googleId      String?   @unique
+  avatarUrl     String?
+  bio           String?
+  sessions      Session[]
+  orders        Order[]
+  favorites     Favorite[]
+  addresses     Address[]
+  createdAt     DateTime  @default(now())
 
   @@map("users")
 }
@@ -55,20 +51,15 @@ model Product {
 }
 
 model Order {
-  id            String   @id @default(cuid())
+  id            String     @id @default(cuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
+  user          User       @relation(fields: [userId], references: [id])
   items         OrderItem[]
-  name          String
-  email         String?
-  mobileNumber  String?
-  address       String?
-  city          String?
-  status        String?   @default("pending")
-  country       String
-  zipCode       String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  addressId     String
+  address       Address    @relation(fields: [addressId], references: [id])
+  status        String     @default("pending")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model OrderItem {
@@ -90,4 +81,24 @@ model Favorite {
   createdAt DateTime @default(now())
 
   @@unique([userId, productId])
+}
+
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  name          String
+  phoneNumber   String
+  addressLine1  String
+  addressLine2  String?
+  city          String
+  state         String
+  country       String
+  zipCode       String
+  isDefault     Boolean  @default(false)
+  orders        Order[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, addressLine1, addressLine2, city, state, country, zipCode])
 }
