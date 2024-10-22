@@ -7,15 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import SearchBar from "./SearchBar";
 import { useCart } from "@/context/CartContext";
-
-const categories = [
-  {
-    name: "Electronics",
-    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
-  },
-  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
-  { name: "Home Appliances", subcategories: ["Furniture", "Decor", "Kitchen"] },
-];
+import { categories } from "../../categories";
 
 export default function Header({ user }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

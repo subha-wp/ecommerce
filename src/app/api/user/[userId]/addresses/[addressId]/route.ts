@@ -59,7 +59,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { userId: string; id: string } },
+  { params }: { params: { userId: string; addressId: string } },
 ) {
   try {
     const { user } = await validateRequest();
@@ -67,9 +67,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.order.delete({
+    await prisma.address.delete({
       where: {
-        id: params.id,
+        id: params.addressId,
         userId: user.id,
       },
     });
