@@ -9,7 +9,6 @@ import noImage from "@/assets/Image_not_available.png";
 
 export default function SingleProductUi({ product }: any) {
   const productThumnail = product.images[0]?.url;
-  console.log(productThumnail);
 
   return (
     <>

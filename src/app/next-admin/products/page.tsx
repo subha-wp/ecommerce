@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getProducts } from "@/lib/products";
 import ProductTable from "./ProductTable";
+import { log } from "console";
 
 export default async function AdminProductsPage() {
   const products = await getProducts();

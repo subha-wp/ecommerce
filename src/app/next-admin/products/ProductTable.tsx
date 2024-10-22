@@ -65,6 +65,8 @@ export default function ProductTable({
     }
   };
 
+  console.log("prdt", products);
+
   return (
     <Table>
       <TableHeader>

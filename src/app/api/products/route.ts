@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         take: limit,
         skip,
         orderBy: { createdAt: "desc" },
+        include: { images: true },
       }),
       prisma.product.count({ where }),
     ]);

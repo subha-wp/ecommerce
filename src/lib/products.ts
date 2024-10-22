@@ -2,7 +2,9 @@ import prisma from "./prisma";
 
 export async function getProducts() {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: { images: true },
+    });
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
