@@ -22,7 +22,7 @@ type Product = {
   price: number;
   minPrice: number;
   sizes: string[];
-  image: string;
+  images: any;
 };
 
 export default function ProductDetails({

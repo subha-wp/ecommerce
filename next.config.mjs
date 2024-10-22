@@ -13,6 +13,10 @@ const nextConfig = {
         hostname: "gist.github.com",
         // pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
       },
+      {
+        protocol: "https",
+        hostname: "user-images.githubusercontent.com",
+      },
     ],
   },
 };

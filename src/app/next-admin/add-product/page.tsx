@@ -13,15 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const categories = [
-  {
-    name: "Electronics",
-    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
-  },
-  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
-  { name: "Home", subcategories: ["Furniture", "Decor", "Kitchen"] },
-];
+import { categories } from "../../../../categories";
 
 export default function AddProductPage() {
   const [formData, setFormData] = useState({
@@ -30,7 +22,7 @@ export default function AddProductPage() {
     price: "",
     minPrice: "",
     sizes: "",
-    image: "",
+    images: [""],
     category: "",
     subcategory: "",
   });
@@ -49,6 +41,24 @@ export default function AddProductPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (index: number, value: string) => {
+    const newImages = [...formData.images];
+    newImages[index] = value;
+    setFormData((prev) => ({ ...prev, images: newImages }));
+  };
+
+  const addImageField = () => {
+    setFormData((prev) => ({ ...prev, images: [...prev.images, ""] }));
+  };
+
+  const removeImageField = (index: number) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      images: newImages.length ? newImages : [""],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -64,6 +74,7 @@ export default function AddProductPage() {
           price: parseFloat(formData.price),
           minPrice: parseFloat(formData.minPrice),
           sizes: formData.sizes.split(",").map((size) => size.trim()),
+          images: formData.images.filter((img) => img.trim() !== ""),
         }),
       });
 
@@ -176,20 +187,31 @@ export default function AddProductPage() {
           />
         </div>
         <div>
-          <label
-            htmlFor="image"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Image URL
+          <label className="block text-sm font-medium text-gray-700">
+            Image URLs
           </label>
-          <Input
-            type="url"
-            id="image"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            required
-          />
+          {formData.images.map((image, index) => (
+            <div key={index} className="mt-2 flex items-center space-x-2">
+              <Input
+                type="url"
+                value={image}
+                onChange={(e) => handleImageChange(index, e.target.value)}
+                placeholder="Enter image URL"
+                required
+              />
+              <Button
+                type="button"
+                onClick={() => removeImageField(index)}
+                variant="destructive"
+                className="shrink-0"
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button type="button" onClick={addImageField} className="mt-2">
+            Add Image URL
+          </Button>
         </div>
         <div>
           <label
@@ -241,7 +263,7 @@ export default function AddProductPage() {
             </Select>
           </div>
         )}
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="w-full">
           {loading ? "Adding..." : "Add Product"}
         </Button>
       </form>

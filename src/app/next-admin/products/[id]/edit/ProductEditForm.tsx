@@ -13,6 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { categories } from "../../../../../../categories";
+
+type ProductImage = {
+  id: string;
+  url: string;
+};
 
 type Product = {
   id: string;
@@ -21,19 +27,10 @@ type Product = {
   price: number;
   minPrice: number;
   sizes: string[];
-  image: string;
+  images: ProductImage[];
   category: string;
   subcategory: string | null;
 };
-
-const categories = [
-  {
-    name: "Electronics",
-    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
-  },
-  { name: "Clothing", subcategories: ["Men", "Women", "Kids"] },
-  { name: "Home", subcategories: ["Furniture", "Decor", "Kitchen"] },
-];
 
 export default function ProductEditForm({ product }: { product: Product }) {
   const [formData, setFormData] = useState(product);
@@ -54,6 +51,24 @@ export default function ProductEditForm({ product }: { product: Product }) {
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (index: number, value: string) => {
+    const newImages = [...formData.images];
+    newImages[index] = { ...newImages[index], url: value };
+    setFormData((prev) => ({ ...prev, images: newImages }));
+  };
+
+  const addImageField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, { id: Date.now().toString(), url: "" }],
+    }));
+  };
+
+  const removeImageField = (index: number) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, images: newImages }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,20 +188,31 @@ export default function ProductEditForm({ product }: { product: Product }) {
         />
       </div>
       <div>
-        <label
-          htmlFor="image"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Image URL
+        <label className="block text-sm font-medium text-gray-700">
+          Image URLs
         </label>
-        <Input
-          type="url"
-          id="image"
-          name="image"
-          value={formData.image}
-          onChange={handleChange}
-          required
-        />
+        {formData.images.map((image, index) => (
+          <div key={image.id} className="mt-2 flex items-center space-x-2">
+            <Input
+              type="url"
+              value={image.url}
+              onChange={(e) => handleImageChange(index, e.target.value)}
+              placeholder="Enter image URL"
+              required
+            />
+            <Button
+              type="button"
+              onClick={() => removeImageField(index)}
+              variant="destructive"
+              className="shrink-0"
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+        <Button type="button" onClick={addImageField} className="mt-2">
+          Add Image URL
+        </Button>
       </div>
       <div>
         <label

@@ -1,32 +1,86 @@
+import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
-import dynamic from "next/dynamic";
-const SingleProductUi = dynamic(() => import("@/components/SingleProductUi"));
-import { getProducts } from "@/lib/products";
+import { ScrollingText } from "@/components/ScrollingText";
+import { CategorySubcategoryProducts } from "@/components/CategorySubcategoryProducts";
+import {
+  getSubcategoriesByCategory,
+  getProductsByCategoryAndSubcategory,
+} from "@/lib/products";
+import { categories } from "../../../categories";
 
 export default async function Home() {
-  const products = await getProducts();
   return (
     <main className="container mx-auto max-w-7xl p-2">
       <HeroSection />
       <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members ⚪ Sale Start from 27th OCT #RELEASEWALIDAY" />
-      <div className="my-4">
-        <p className="text-center text-2xl font-bold">Products</p>
-      </div>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-        {products.map((product) => (
-          <SingleProductUi key={product.id} product={product} />
+      <div className="my-8 space-y-12">
+        {categories.map((category) => (
+          <Suspense
+            key={category.name}
+            fallback={<div>Loading {category.name} products...</div>}
+          >
+            <CategoryWrapper category={category} />
+          </Suspense>
         ))}
       </div>
     </main>
   );
 }
 
-const ScrollingText: React.FC<{ text: string }> = ({ text }) => {
+async function CategoryWrapper({
+  category,
+}: {
+  category: { name: string; subcategories: string[] };
+}) {
+  if (category.subcategories.length === 0) {
+    const products = await getProductsByCategoryAndSubcategory(
+      category.name,
+      null,
+      10,
+    );
+    return (
+      <CategorySubcategoryProducts
+        category={category.name}
+        subcategory={null}
+        products={products}
+      />
+    );
+  }
+
   return (
-    <div className="my-4 overflow-hidden whitespace-nowrap">
-      <div className="inline-block animate-scroll-right">
-        <span className="font-medium uppercase">{text}</span>
-      </div>
+    <div className="space-y-8">
+      {category.subcategories.map((subcategory) => (
+        <Suspense
+          key={`${category.name}-${subcategory}`}
+          fallback={<div>Loading {subcategory} products...</div>}
+        >
+          <SubcategoryProductsWrapper
+            category={category.name}
+            subcategory={subcategory}
+          />
+        </Suspense>
+      ))}
     </div>
   );
-};
+}
+
+async function SubcategoryProductsWrapper({
+  category,
+  subcategory,
+}: {
+  category: string;
+  subcategory: string;
+}) {
+  const products = await getProductsByCategoryAndSubcategory(
+    category,
+    subcategory,
+    10,
+  );
+  return (
+    <CategorySubcategoryProducts
+      category={category}
+      subcategory={subcategory}
+      products={products}
+    />
+  );
+}

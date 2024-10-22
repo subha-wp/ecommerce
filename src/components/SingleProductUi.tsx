@@ -5,14 +5,18 @@ import React, { Suspense } from "react";
 import AddToCartButton from "./AddToCartButton";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import noImage from "@/assets/Image_not_available.png";
 
 export default function SingleProductUi({ product }: any) {
+  const productThumnail = product.images[0]?.url;
+  console.log(productThumnail);
+
   return (
     <>
-      <div className="rounded-lg border p-2">
+      <div className="max-w-[250px] rounded-lg border p-2">
         <Link href={`/products/${product.id}`}>
           <Image
-            src={product.image}
+            src={productThumnail ? productThumnail : noImage}
             alt={product.title}
             width={300}
             height={300}

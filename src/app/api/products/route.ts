@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
+import { validateRequest } from "@/auth";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -38,21 +39,43 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = await req.json();
+    const {
+      title,
+      description,
+      price,
+      minPrice,
+      sizes,
+      images,
+      category,
+      subcategory,
+    } = data;
+
     const product = await prisma.product.create({
       data: {
-        title: body.title,
-        description: body.description,
-        price: parseFloat(body.price),
-        minPrice: parseFloat(body.minPrice),
-        sizes: body.sizes,
-        image: body.image,
-        category: body.category,
-        subcategory: body.subcategory,
+        title,
+        description,
+        price,
+        minPrice,
+        sizes,
+        category,
+        subcategory,
+        images: {
+          create: images.map((url: string) => ({ url })),
+        },
+      },
+      include: {
+        images: true,
       },
     });
+
     return NextResponse.json(product);
   } catch (error) {
     console.error("Error creating product:", error);

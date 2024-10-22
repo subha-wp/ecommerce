@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import ProductDetails from "./ProductDetails";
 import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
+import ProductImageGallery from "./ProductImageGallery";
 
 export default async function ProductPage({
   params,
@@ -21,16 +21,10 @@ export default async function ProductPage({
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="grid gap-2 md:grid-cols-2">
-        <div>
-          <Image
-            src={product.image}
-            alt={product.title}
-            width={500}
-            height={500}
-            className="mb-4 h-[300px] w-full rounded object-contain md:h-[500px]"
-          />
-        </div>
+      <div className="grid gap-8 md:grid-cols-2">
+        <Suspense fallback={<div>Loading images...</div>}>
+          <ProductImageGallery images={product.images} />
+        </Suspense>
         <div>
           <h1 className="mb-4 text-3xl font-bold">{product.title}</h1>
           <div className="flex items-center gap-2">

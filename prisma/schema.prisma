@@ -41,13 +41,22 @@ model Product {
   price       Float
   minPrice    Float
   sizes       String[]
-  image       String
+  images      ProductImage[]
   category    String
   subcategory String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   favorites   Favorite[]
   orderItems  OrderItem[]
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  url       String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
