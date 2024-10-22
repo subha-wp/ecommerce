@@ -15,7 +15,6 @@ export async function PUT(
         price: parseFloat(body.price),
         minPrice: parseFloat(body.minPrice),
         sizes: body.sizes,
-        image: body.image,
         category: body.category,
         subcategory: body.subcategory,
       },
