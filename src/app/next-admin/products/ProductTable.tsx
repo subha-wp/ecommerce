@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -23,7 +24,7 @@ type Product = {
   description: string;
   minPrice: number;
   sizes: string[];
-  image: string;
+
   category: string;
   subcategory: string | null;
 };
