@@ -18,7 +18,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Adda Baji | Admin",
+  title: "Bazaar",
   description: "",
 };
 
