@@ -22,7 +22,6 @@ export async function GET(
             product: {
               select: {
                 title: true,
-                image: true,
               },
             },
           },
