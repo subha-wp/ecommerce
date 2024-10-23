@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Menu, X, ShoppingCart, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,22 +12,42 @@ import { categories } from "../../categories";
 export default function Header({ user }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const { cart } = useCart();
+  const lastScrollY = useRef(0);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 100);
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > 100) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+
+      if (currentScrollY > lastScrollY.current) {
+        // Scrolling down
+        setIsVisible(false);
+      } else {
+        // Scrolling up
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
-      className={`z-50 bg-white shadow-md transition-all duration-300 ${isSticky ? "sticky top-0" : ""}`}
+      className={`z-50 bg-white shadow-md transition-all duration-300 ${
+        isSticky ? "sticky top-0" : ""
+      } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <div className="flex w-full items-center justify-between">

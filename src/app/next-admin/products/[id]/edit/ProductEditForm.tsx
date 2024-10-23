@@ -62,7 +62,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
   const addImageField = () => {
     setFormData((prev) => ({
       ...prev,
-      images: [...prev.images, { id: Date.now().toString(), url: "" }],
+      images: [...prev.images, { id: `new-${Date.now()}`, url: "" }],
     }));
   };
 

@@ -65,8 +65,6 @@ export default function ProductTable({
     }
   };
 
-  console.log("prdt", products);
-
   return (
     <Table>
       <TableHeader>
@@ -86,7 +84,7 @@ export default function ProductTable({
           <TableRow key={product.id}>
             <TableCell>
               <Image
-                src={product.image}
+                src={product.images[0].url}
                 alt={product.title}
                 width={30}
                 height={30}
