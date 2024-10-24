@@ -1,8 +1,11 @@
 export const categories = [
   {
     name: "Electronics",
-    subcategories: ["Smartphones", "Refrigerator", "AC", "Accessories"],
+    subcategories: ["Smartphones", "Refrigerator", "AC", "TV"],
   },
 
-  { name: "Home Appliances", subcategories: ["Furniture", "Decor", "Kitchen"] },
+  {
+    name: "Home Appliances",
+    subcategories: ["Washing Machine", "Microwaves", "Air Fryer"],
+  },
 ];
