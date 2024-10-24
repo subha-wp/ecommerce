@@ -12,7 +12,7 @@ export default function SingleProductUi({ product }: any) {
 
   return (
     <>
-      <div className="max-w-[250px] rounded-lg border p-2">
+      <div className="min-w-[200px] max-w-[250px] rounded-lg border p-2">
         <Link href={`/products/${product.id}`}>
           <Image
             src={productThumnail ? productThumnail : noImage}

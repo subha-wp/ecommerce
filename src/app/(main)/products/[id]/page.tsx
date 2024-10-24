@@ -1,13 +1,27 @@
 // @ts-nocheck
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import ProductDetails from "./ProductDetails";
+import dynamic from "next/dynamic";
 import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
-import ProductImageGallery from "./ProductImageGallery";
-import RelevantProducts from "@/components/RelevantProducts";
 import { categories } from "../../../../../categories";
+import { Spinner } from "@/components/Spinner";
+
+const ProductDetails = dynamic(() => import("./ProductDetails"), {
+  loading: () => <Spinner />,
+});
+
+const ProductImageGallery = dynamic(() => import("./ProductImageGallery"), {
+  loading: () => <Spinner />,
+});
+
+const RelevantProducts = dynamic(
+  () => import("@/components/RelevantProducts"),
+  {
+    loading: () => <Spinner />,
+  },
+);
 
 export default async function ProductPage({
   params,
@@ -32,7 +46,7 @@ export default async function ProductPage({
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
       <div className="grid gap-8 md:grid-cols-2">
-        <Suspense fallback={<div>Loading images...</div>}>
+        <Suspense fallback={<Spinner />}>
           <ProductImageGallery images={product.images} />
         </Suspense>
         <div>
@@ -46,7 +60,7 @@ export default async function ProductPage({
           <p className="py-2 text-sm text-green-500">
             *Next Day Delivery all over West Bengal
           </p>
-          <Suspense fallback={<div>Loading product details...</div>}>
+          <Suspense fallback={<Spinner />}>
             <ProductDetails product={product} initialIsFavorite={isFavorite} />
           </Suspense>
           <div className="py-4">
@@ -55,15 +69,17 @@ export default async function ProductPage({
           </div>
         </div>
       </div>
-      <RelevantProducts
-        productId={product.id}
-        category={product.category}
-        subcategory={
-          categoryObj.subcategories.includes(product.subcategory || "")
-            ? product.subcategory
-            : undefined
-        }
-      />
+      <Suspense fallback={<Spinner />}>
+        <RelevantProducts
+          productId={product.id}
+          category={product.category}
+          subcategory={
+            categoryObj.subcategories.includes(product.subcategory || "")
+              ? product.subcategory
+              : undefined
+          }
+        />
+      </Suspense>
     </div>
   );
 }

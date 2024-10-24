@@ -1,13 +1,20 @@
 import Link from "next/link";
-
 import { Button } from "./ui/button";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import SingleProductUi from "./SingleProductUi";
 
+interface Product {
+  id: string;
+  title: string;
+  price: number;
+  images: { url: string }[];
+  // Add other necessary fields
+}
+
 interface CategorySubcategoryProductsProps {
   category: string;
   subcategory: string | null;
-  products: any;
+  products: Product[];
 }
 
 export function CategorySubcategoryProducts({
@@ -34,7 +41,7 @@ export function CategorySubcategoryProducts({
       </div>
       <ScrollArea>
         <div className="flex space-x-4 pb-4">
-          {products.map((product: any) => (
+          {products.map((product: Product) => (
             <SingleProductUi key={product.id} product={product} />
           ))}
         </div>

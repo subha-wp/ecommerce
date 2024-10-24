@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
           take: 1,
         },
       },
-      take: 5,
+      take: 4,
     });
 
     return NextResponse.json(relevantProducts);

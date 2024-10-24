@@ -1,11 +1,18 @@
+// @ts-nocheck
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getProducts } from "@/lib/products";
+import { getAdminProducts } from "@/lib/products";
 import ProductTable from "./ProductTable";
-import { log } from "console";
 
-export default async function AdminProductsPage() {
-  const products = await getProducts();
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: { page?: string; pageSize?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
+  const pageSize = Number(searchParams.pageSize) || 10;
+
+  const { products, totalProducts } = await getAdminProducts(page, pageSize);
 
   return (
     <div className="w-full">
@@ -15,7 +22,12 @@ export default async function AdminProductsPage() {
           <Button>Add New Product</Button>
         </Link>
       </div>
-      <ProductTable products={products} />
+      <ProductTable
+        products={products}
+        currentPage={page}
+        pageSize={pageSize}
+        totalProducts={totalProducts}
+      />
     </div>
   );
 }

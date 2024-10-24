@@ -60,10 +60,34 @@ export async function getSubcategoriesByCategory(category: string) {
   }
 }
 
+// export async function getProductsByCategoryAndSubcategory(
+//   category: string,
+//   subcategory: string | null,
+//   limit: number = 10,
+// ) {
+//   try {
+//     const products = await prisma.product.findMany({
+//       where: {
+//         category,
+//         ...(subcategory && { subcategory }),
+//       },
+//       take: limit,
+//       orderBy: { createdAt: "desc" },
+//       include: { images: true },
+//     });
+//     return products;
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     return [];
+//   }
+// }
+
+// implement
+
 export async function getProductsByCategoryAndSubcategory(
   category: string,
   subcategory: string | null,
-  limit: number = 10,
+  limit: number,
 ) {
   try {
     const products = await prisma.product.findMany({
@@ -71,13 +95,52 @@ export async function getProductsByCategoryAndSubcategory(
         category,
         ...(subcategory && { subcategory }),
       },
-      take: limit,
       orderBy: { createdAt: "desc" },
-      include: { images: true },
+      include: {
+        images: {
+          select: { url: true },
+          take: 1,
+        },
+      },
+      take: limit,
     });
+
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
+  }
+}
+
+// implement
+
+export async function getAdminProducts(
+  page: number = 1,
+  pageSize: number = 10,
+) {
+  const skip = (page - 1) * pageSize;
+
+  try {
+    const [products, totalProducts] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: pageSize,
+        include: {
+          images: {
+            select: { url: true },
+            take: 1,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.product.count(),
+    ]);
+
+    return { products, totalProducts };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return { products: [], totalProducts: 0 };
   }
 }

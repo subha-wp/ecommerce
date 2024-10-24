@@ -140,7 +140,7 @@ export default function Header({ user }: any) {
                     <Link
                       key={subcategory}
                       href={`/products?category=${category.name}&subcategory=${subcategory}`}
-                      className="block text-sm text-gray-600 hover:text-gray-900"
+                      className="z-50 block text-sm text-gray-600 hover:text-gray-900"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {subcategory}

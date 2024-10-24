@@ -7,6 +7,19 @@ import {
   getProductsByCategoryAndSubcategory,
 } from "@/lib/products";
 import { categories } from "../../../categories";
+import { Spinner } from "@/components/Spinner";
+import dynamic from "next/dynamic";
+
+const DynamicCategorySubcategoryProducts = dynamic(
+  () =>
+    import("@/components/CategorySubcategoryProducts").then(
+      (mod) => mod.CategorySubcategoryProducts,
+    ),
+  {
+    loading: () => <Spinner />,
+    ssr: false,
+  },
+);
 
 export default async function Home() {
   return (
@@ -15,10 +28,7 @@ export default async function Home() {
       <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members ⚪ Sale Start from 27th OCT #RELEASEWALIDAY" />
       <div className="my-8 space-y-12">
         {categories.map((category) => (
-          <Suspense
-            key={category.name}
-            fallback={<div>Loading {category.name} products...</div>}
-          >
+          <Suspense key={category.name} fallback={<Spinner />}>
             <CategoryWrapper category={category} />
           </Suspense>
         ))}
@@ -39,7 +49,7 @@ async function CategoryWrapper({
       10,
     );
     return (
-      <CategorySubcategoryProducts
+      <DynamicCategorySubcategoryProducts
         category={category.name}
         subcategory={null}
         products={products}
@@ -52,7 +62,7 @@ async function CategoryWrapper({
       {category.subcategories.map((subcategory) => (
         <Suspense
           key={`${category.name}-${subcategory}`}
-          fallback={<div>Loading {subcategory} products...</div>}
+          fallback={<Spinner />}
         >
           <SubcategoryProductsWrapper
             category={category.name}
@@ -77,7 +87,7 @@ async function SubcategoryProductsWrapper({
     10,
   );
   return (
-    <CategorySubcategoryProducts
+    <DynamicCategorySubcategoryProducts
       category={category}
       subcategory={subcategory}
       products={products}
