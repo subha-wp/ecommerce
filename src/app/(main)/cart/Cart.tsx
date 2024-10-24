@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 
 // Function to get tomorrow's date
 const getTomorrowDate = () => {
@@ -37,12 +37,7 @@ export default function Cart({ user }: { user: any }) {
       <h1 className="mb-6 text-2xl font-bold">Your Cart</h1>
       {cart.length === 0 ? (
         <div className="flex flex-col items-center justify-center space-y-4 py-12">
-          <Image
-            src="/empty-cart.png"
-            alt="Empty Cart"
-            width={200}
-            height={200}
-          />
+          <ShoppingCart />
           <p className="text-lg font-medium text-gray-600">
             Your cart is empty.
           </p>
