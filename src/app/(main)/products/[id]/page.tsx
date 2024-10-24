@@ -43,6 +43,11 @@ export default async function ProductPage({
     notFound();
   }
 
+  // Calculate discount percentage
+  const discountPercentage = Math.round(
+    ((product.price - product.minPrice) / product.price) * 100,
+  );
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
       <div className="grid gap-8 md:grid-cols-2">
@@ -56,10 +61,11 @@ export default async function ProductPage({
               ₹{product.price.toFixed(2)}
             </p>
             <p className="font-semibold">₹{product.minPrice.toFixed(2)}</p>
+            <p className="text-sm font-semibold text-green-500">
+              ({discountPercentage}% off)
+            </p>
           </div>
-          <p className="py-2 text-sm text-green-500">
-            *Next Day Delivery all over West Bengal
-          </p>
+
           <Suspense fallback={<Spinner />}>
             <ProductDetails product={product} initialIsFavorite={isFavorite} />
           </Suspense>
