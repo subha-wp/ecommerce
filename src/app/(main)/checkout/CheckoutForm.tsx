@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import * as Linking from "expo-linking";
 
 const UPI_ID = "amzn0013009269@apl";
 const WHATSAPP_NUMBER = "9531699377";
@@ -102,13 +103,23 @@ export default function CheckoutForm({
     return false;
   };
 
-  const handleUPIPayment = () => {
+  const handleUPIPayment = async () => {
     const amount = getFinalAmount().toFixed(2);
     const upiLink = `upi://pay?pa=${UPI_ID}&pn=AddaBaji&am=${amount}&cu=INR&tn=Order%20Payment`;
     setUpiLink(upiLink);
 
     if (isMobile()) {
-      window.location.href = upiLink;
+      // Use Linking API to open the UPI link
+      try {
+        await Linking.openURL(upiLink);
+      } catch (error) {
+        console.error("Error opening UPI link:", error);
+        toast({
+          title: "Error",
+          description: "Unable to open UPI app. Please try again.",
+          variant: "destructive",
+        });
+      }
     } else {
       setIsUPIDialogOpen(true);
     }
@@ -185,7 +196,6 @@ export default function CheckoutForm({
       }
 
       const data = await response.json();
-      console.log(data);
 
       if (data.valid) {
         setAppliedCoupon(couponCode);
