@@ -26,7 +26,7 @@ export function CategorySubcategoryProducts({
     return null;
   }
 
-  const title = subcategory ? `${category} - ${subcategory}` : category;
+  const title = subcategory ? subcategory : category;
   const seeMoreLink = subcategory
     ? `/products?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`
     : `/products?category=${encodeURIComponent(category)}`;

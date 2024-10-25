@@ -8,4 +8,8 @@ export const categories = [
     name: "Home Appliances",
     subcategories: ["Washing Machine", "Microwaves", "Air Fryer"],
   },
+  {
+    name: "Coupon",
+    subcategories: [],
+  },
 ];

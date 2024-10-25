@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import { ScrollingText } from "@/components/ScrollingText";
+import joinPrime from "@/assets/join-prime.jpg";
 import { CategorySubcategoryProducts } from "@/components/CategorySubcategoryProducts";
 import {
   getSubcategoriesByCategory,
@@ -9,6 +10,8 @@ import {
 import { categories } from "../../../categories";
 import { Spinner } from "@/components/Spinner";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import Image from "next/image";
 
 const DynamicCategorySubcategoryProducts = dynamic(
   () =>
@@ -26,7 +29,18 @@ export default async function Home() {
     <main className="container mx-auto max-w-7xl p-2">
       <HeroSection />
       <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members ⚪ Sale Start from 27th OCT #RELEASEWALIDAY" />
-      <div className="my-8 space-y-12">
+      <div>
+        <Link href={`/products/cm2ommbpj0000gi2fg62px7ez`}>
+          <Image
+            src={joinPrime}
+            height={150}
+            width={1312}
+            className="rounded-md"
+            alt="prime join"
+          />
+        </Link>
+      </div>
+      <div className="my-4 space-y-12">
         {categories.map((category) => (
           <Suspense key={category.name} fallback={<Spinner />}>
             <CategoryWrapper category={category} />
