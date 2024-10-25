@@ -69,6 +69,9 @@ export default function CheckoutForm({
   const router = useRouter();
   const [isUPIDialogOpen, setIsUPIDialogOpen] = useState(false);
   const [upiLink, setUpiLink] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
 
   useEffect(() => {
     const sum = cart.reduce(
@@ -80,10 +83,14 @@ export default function CheckoutForm({
 
   const handlePaymentModeChange = (value: string) => {
     setPaymentMode(value);
+    if (value !== "UPI") {
+      setAppliedCoupon(null);
+      setDiscountAmount(0);
+    }
   };
 
   const getFinalAmount = () => {
-    return paymentMode === "UPI" ? totalAmount * 0.9 : totalAmount;
+    return totalAmount - discountAmount;
   };
 
   const isMobile = () => {
@@ -132,6 +139,8 @@ export default function CheckoutForm({
           })),
           paymentMode,
           totalAmount: getFinalAmount(),
+          appliedCoupon,
+          discountAmount,
         }),
       });
 
@@ -152,6 +161,48 @@ export default function CheckoutForm({
         title: "Error",
         description:
           "There was an error processing your order. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const applyCoupon = async () => {
+    if (paymentMode !== "UPI") {
+      toast({
+        title: "Invalid Payment Mode",
+        description: "Coupons can only be applied to UPI payments.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/coupons/validate?code=${couponCode}`);
+      if (!response.ok) {
+        throw new Error("Failed to validate coupon");
+      }
+
+      const data = await response.json();
+      if (data.valid) {
+        setAppliedCoupon(couponCode);
+        setDiscountAmount(data.discountAmount);
+        toast({
+          title: "Coupon Applied",
+          description: `Discount of ₹${data.discountAmount.toFixed(2)} applied to your order.`,
+        });
+      } else {
+        toast({
+          title: "Invalid Coupon",
+          description: "The entered coupon code is invalid or expired.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error validating coupon:", error);
+      toast({
+        title: "Error",
+        description:
+          "There was an error validating the coupon. Please try again.",
         variant: "destructive",
       });
     }
@@ -189,9 +240,7 @@ export default function CheckoutForm({
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="UPI" id="upi" />
-              <Label htmlFor="upi">
-                UPI <span className="text-green-400">(10% off)</span>
-              </Label>
+              <Label htmlFor="upi">UPI</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="COD" id="cod" />
@@ -200,13 +249,30 @@ export default function CheckoutForm({
           </RadioGroup>
         </div>
 
+        {paymentMode === "UPI" && (
+          <div className="space-y-2">
+            <Label htmlFor="coupon">Coupon Code</Label>
+            <div className="flex space-x-2">
+              <Input
+                id="coupon"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Enter coupon code"
+              />
+              <Button type="button" onClick={applyCoupon}>
+                Apply
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div>
           <Label>Total Amount</Label>
           <p className="text-lg font-semibold">
             ₹{getFinalAmount().toFixed(2)}
-            {paymentMode === "UPI" && (
+            {discountAmount > 0 && (
               <span className="ml-2 text-sm text-green-500">
-                (10% discount applied)
+                (₹{discountAmount.toFixed(2)} discount applied)
               </span>
             )}
           </p>

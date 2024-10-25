@@ -52,7 +52,7 @@ export default function Header({ user }: any) {
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <div className="flex w-full items-center justify-between">
           <Link href="/" className="text-xl font-bold">
-            CHIN TAPAK
+            ZapTray
           </Link>
           <nav className="hidden space-x-6 md:flex">
             {categories.map((category) => (

@@ -10,7 +10,7 @@ export default function SearchPage({
   const query = searchParams.q;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       <h1 className="mb-4 text-2xl font-bold">Search Results for "{query}"</h1>
       <Suspense fallback={<div>Loading...</div>}>
         <SearchResults query={query} />

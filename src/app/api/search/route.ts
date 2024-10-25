@@ -21,6 +21,12 @@ export async function GET(request: NextRequest) {
         ],
       },
       take: 20, // Limit to 20 results
+      include: {
+        images: {
+          select: { url: true },
+          take: 1,
+        },
+      },
     });
 
     return NextResponse.json({ products });
