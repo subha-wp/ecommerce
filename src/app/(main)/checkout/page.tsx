@@ -25,12 +25,12 @@ export default async function CheckoutPage() {
             <CheckoutForm user={user} addresses={addresses} />
           </Suspense>
         </div>
-        <div>
+        {/* <div>
           <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
           <Suspense fallback={<div>Loading order summary...</div>}>
             <OrderSummary />
           </Suspense>
-        </div>
+        </div> */}
       </div>
     </div>
   );
