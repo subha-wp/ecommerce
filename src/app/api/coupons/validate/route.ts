@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
+  const totalAmount = searchParams.get("totalAmount");
 
   if (!code) {
     return NextResponse.json(
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     let discountAmount = 0;
     if (coupon.discountType === "percentage") {
-      discountAmount = coupon.discountValue / 100;
+      discountAmount = (Number(totalAmount) * coupon.discountValue) / 100;
     } else {
       discountAmount = coupon.discountValue;
     }

@@ -177,12 +177,16 @@ export default function CheckoutForm({
     }
 
     try {
-      const response = await fetch(`/api/coupons/validate?code=${couponCode}`);
+      const response = await fetch(
+        `/api/coupons/validate?code=${couponCode}&totalAmount=${totalAmount}`,
+      );
       if (!response.ok) {
         throw new Error("Failed to validate coupon");
       }
 
       const data = await response.json();
+      console.log(data);
+
       if (data.valid) {
         setAppliedCoupon(couponCode);
         setDiscountAmount(data.discountAmount);
