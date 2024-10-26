@@ -7,11 +7,13 @@ import {
   getSubcategoriesByCategory,
   getProductsByCategoryAndSubcategory,
 } from "@/lib/products";
-import { categories } from "../../../categories";
+import { categories, categories2 } from "../../../categories";
 import { Spinner } from "@/components/Spinner";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
+
+import SubcategoryGrid from "@/components/SubcategoryGrid";
 
 const DynamicCategorySubcategoryProducts = dynamic(
   () =>
@@ -27,6 +29,7 @@ const DynamicCategorySubcategoryProducts = dynamic(
 export default async function Home() {
   return (
     <main className="container mx-auto max-w-7xl p-2">
+      <SubcategoryGrid categories={categories2} />
       <HeroSection />
       <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members ⚪ Sale Start from 27th OCT #RELEASEWALIDAY" />
       <div>

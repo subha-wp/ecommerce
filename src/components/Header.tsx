@@ -2,21 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingCart, User, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import SearchBar from "./SearchBar";
+import { Input } from "@/components/ui/input";
 import { useCart } from "@/context/CartContext";
-import { categories } from "../../categories";
+import { useRouter } from "next/navigation";
 
 export default function Header({ user }: any) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const { cart } = useCart();
   const lastScrollY = useRef(0);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,10 +28,8 @@ export default function Header({ user }: any) {
       }
 
       if (currentScrollY > lastScrollY.current) {
-        // Scrolling down
         setIsVisible(false);
       } else {
-        // Scrolling up
         setIsVisible(true);
       }
 
@@ -42,6 +39,13 @@ export default function Header({ user }: any) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <header
@@ -54,30 +58,29 @@ export default function Header({ user }: any) {
           <Link href="/" className="text-xl font-bold">
             ZapTray
           </Link>
-          <nav className="hidden space-x-6 md:flex">
-            {categories.map((category) => (
-              <div key={category.name} className="group relative">
-                <button className="flex items-center text-gray-600 hover:text-gray-900">
-                  {category.name}
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-                <div className="invisible absolute left-0 z-50 mt-2 w-48 rounded-md bg-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100">
-                  {category.subcategories.map((subcategory) => (
-                    <Link
-                      key={subcategory}
-                      href={`/products?category=${category.name}&subcategory=${subcategory}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {subcategory}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </nav>
-          <div className="mx-4 hidden max-w-md flex-1 md:block">
-            <SearchBar />
-          </div>
+          <form
+            onSubmit={handleSearch}
+            className="mx-4 hidden max-w-xl flex-1 lg:flex"
+          >
+            <div className="relative w-full">
+              <Input
+                type="search"
+                placeholder="Search products..."
+                className="w-full pr-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button
+                type="submit"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full"
+              >
+                <Search className="h-4 w-4" />
+                <span className="sr-only">Search</span>
+              </Button>
+            </div>
+          </form>
           <div className="flex items-center space-x-4">
             <Link href="/cart" className="relative">
               <ShoppingCart className="h-6 w-6 text-gray-600" />
@@ -102,56 +105,29 @@ export default function Header({ user }: any) {
                 <User className="h-6 w-6 text-gray-600" />
               </Link>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={toggleMenu}
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
           </div>
         </div>
-        <div className="mt-4 w-full md:hidden">
-          <SearchBar />
-        </div>
+        <form onSubmit={handleSearch} className="mt-4 flex lg:hidden">
+          <div className="relative w-full">
+            <Input
+              type="search"
+              placeholder="Search products..."
+              className="w-full pr-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Button
+              type="submit"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full"
+            >
+              <Search className="h-4 w-4" />
+              <span className="sr-only">Search</span>
+            </Button>
+          </div>
+        </form>
       </div>
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <nav className="flex flex-col space-y-2 px-4 py-4">
-            {categories.map((category) => (
-              <div key={category.name} className="space-y-2">
-                <button
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex w-full items-center justify-between font-semibold text-gray-600 hover:text-gray-900"
-                >
-                  <Link href={`/products?category=${category.name}`}>
-                    {category.name}
-                  </Link>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-                <div className="space-y-2 pl-4">
-                  {category.subcategories.map((subcategory) => (
-                    <Link
-                      key={subcategory}
-                      href={`/products?category=${category.name}&subcategory=${subcategory}`}
-                      className="z-50 block text-sm text-gray-600 hover:text-gray-900"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {subcategory}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   );
 }
