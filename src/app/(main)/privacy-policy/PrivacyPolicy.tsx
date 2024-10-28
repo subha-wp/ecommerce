@@ -5,7 +5,7 @@ const PrivacyPolicy = () => {
       <p className="mb-4">
         At JSR TRADERS, we value your privacy and are committed to protecting
         your personal information. This Privacy Policy outlines how we collect,
-        use, and share your information when you use our app, CHIN Tapak.
+        use, and share your information when you use our app, ZapTray.
       </p>
 
       <h2 className="mb-2 text-2xl font-bold">Information We Collect</h2>

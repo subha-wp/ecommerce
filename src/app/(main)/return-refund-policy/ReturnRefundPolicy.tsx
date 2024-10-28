@@ -4,7 +4,7 @@ const ReturnRefundPolicy = () => {
       <h1 className="mb-4 text-3xl font-bold">Return and Refund Policy</h1>
       <p className="mb-4">
         At JSR TRADERS, we strive to ensure you are satisfied with your purchase
-        from CHIN Tapak. However, if you need to return an item, please read our
+        from ZapTray. However, if you need to return an item, please read our
         return policy below.
       </p>
 
