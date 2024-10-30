@@ -14,6 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import SubcategoryGrid from "@/components/SubcategoryGrid";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
 const DynamicCategorySubcategoryProducts = dynamic(
   () =>
@@ -43,6 +44,9 @@ export default async function Home() {
           />
         </Link>
       </div>
+      <Suspense fallback={<Spinner />}>
+        <FeaturedProducts />
+      </Suspense>
       <div className="my-4 space-y-12">
         {categories.map((category) => (
           <Suspense key={category.name} fallback={<Spinner />}>

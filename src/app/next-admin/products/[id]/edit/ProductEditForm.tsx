@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -30,6 +31,8 @@ type Product = {
   images: ProductImage[];
   category: string;
   subcategory: string | null;
+  isFeatured: boolean;
+  isVisible: boolean;
 };
 
 export default function ProductEditForm({ product }: { product: Product }) {
@@ -261,6 +264,36 @@ export default function ProductEditForm({ product }: { product: Product }) {
               ))}
           </SelectContent>
         </Select>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="isFeatured"
+          checked={formData.isFeatured}
+          onCheckedChange={(checked) =>
+            setFormData((prev) => ({ ...prev, isFeatured: checked }))
+          }
+        />
+        <label
+          htmlFor="isFeatured"
+          className="text-sm font-medium text-gray-700"
+        >
+          Featured Product
+        </label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="isVisible"
+          checked={formData.isVisible}
+          onCheckedChange={(checked) =>
+            setFormData((prev) => ({ ...prev, isVisible: checked }))
+          }
+        />
+        <label
+          htmlFor="isVisible"
+          className="text-sm font-medium text-gray-700"
+        >
+          Visible
+        </label>
       </div>
       <Button type="submit">Update Product</Button>
     </form>

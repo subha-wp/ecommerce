@@ -144,3 +144,23 @@ export async function getAdminProducts(
     return { products: [], totalProducts: 0 };
   }
 }
+
+export async function getFeaturedProducts(limit?: number) {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        isFeatured: true,
+        isVisible: true,
+      },
+      include: {
+        images: true,
+      },
+      take: limit,
+    });
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching featured products:", error);
+    throw new Error("Failed to fetch featured products");
+  }
+}

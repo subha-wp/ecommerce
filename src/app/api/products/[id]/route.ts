@@ -83,6 +83,34 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = await req.json();
+    const product = await prisma.product.update({
+      where: { id: params.id },
+      data: {
+        isFeatured: data.isFeatured !== undefined ? data.isFeatured : undefined,
+        isVisible: data.isVisible !== undefined ? data.isVisible : undefined,
+      },
+    });
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return NextResponse.json(
+      { error: "Failed to update product" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },

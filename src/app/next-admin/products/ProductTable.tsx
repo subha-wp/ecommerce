@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -34,6 +35,8 @@ type Product = {
   category: string;
   subcategory: string | null;
   images: { url: string }[];
+  isFeatured: boolean;
+  isVisible: boolean;
 };
 
 type ProductTableProps = {
@@ -83,6 +86,44 @@ export default function ProductTable({
     }
   };
 
+  const handleToggle = async (
+    id: string,
+    field: "isFeatured" | "isVisible",
+    value: boolean,
+  ) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ [field]: value }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update product ${field}`);
+      }
+
+      setProducts(
+        products.map((product) =>
+          product.id === id ? { ...product, [field]: value } : product,
+        ),
+      );
+
+      toast({
+        title: "Product updated",
+        description: `Product has been ${field === "isFeatured" ? (value ? "featured" : "unfeatured") : value ? "made visible" : "hidden"}.`,
+      });
+    } catch (error) {
+      console.error(`Error updating product ${field}:`, error);
+      toast({
+        title: "Error",
+        description: `There was an error updating the product ${field}. Please try again.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handlePageChange = (newPage: number) => {
     router.push(`/next-admin/products?page=${newPage}&pageSize=${pageSize}`);
   };
@@ -127,7 +168,8 @@ export default function ProductTable({
             <TableHead>Subcategory</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Min Price</TableHead>
-            <TableHead>Description</TableHead>
+            <TableHead>Featured</TableHead>
+            <TableHead>Visible</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -148,7 +190,22 @@ export default function ProductTable({
               <TableCell>{product.subcategory}</TableCell>
               <TableCell>₹{product.price.toFixed(2)}</TableCell>
               <TableCell>₹{product.minPrice.toFixed(2)}</TableCell>
-              <TableCell>{product.description.substring(0, 50)}...</TableCell>
+              <TableCell>
+                <Switch
+                  checked={product.isFeatured}
+                  onCheckedChange={(checked) =>
+                    handleToggle(product.id, "isFeatured", checked)
+                  }
+                />
+              </TableCell>
+              <TableCell>
+                <Switch
+                  checked={product.isVisible}
+                  onCheckedChange={(checked) =>
+                    handleToggle(product.id, "isVisible", checked)
+                  }
+                />
+              </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
                   <Link href={`/next-admin/products/${product.id}/edit`}>
