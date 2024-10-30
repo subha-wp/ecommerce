@@ -55,8 +55,9 @@ export default function Header({ user }: any) {
     >
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <div className="flex w-full items-center justify-between">
-          <Link href="/" className="text-xl font-bold">
-            ZapTray
+          <Link href="/" className="text-right">
+            <p className="-mb-3 text-xl font-bold">ZapTray</p>
+            <small className="text-[7px]">JSR TRADERS</small>
           </Link>
           <form
             onSubmit={handleSearch}
