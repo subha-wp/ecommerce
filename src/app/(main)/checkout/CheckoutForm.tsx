@@ -112,14 +112,12 @@ export default function CheckoutForm({
       console.log("payment res", response);
 
       const { paymentLink, sessionId } = await response.json();
-      console.log("checkout form:", paymentLink);
-      console.log("sessionId:", sessionId);
 
       if (!paymentLink) {
         throw new Error("No payment link received");
       }
       const cashfree = await load({
-        mode: "sandbox", // or "production"
+        mode: "production", // or "production"
       });
       let checkoutOptions = {
         paymentSessionId: sessionId,
