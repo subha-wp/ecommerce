@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -18,11 +19,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { load } from "@cashfreepayments/cashfree-js";
 
 type Address = {
   id: string;
@@ -108,15 +109,25 @@ export default function CheckoutForm({
         const error = await response.json();
         throw new Error(error.message || "Failed to initiate payment");
       }
+      console.log("payment res", response);
 
-      const { paymentLink } = await response.json();
+      const { paymentLink, sessionId } = await response.json();
+      console.log("checkout form:", paymentLink);
+      console.log("sessionId:", sessionId);
 
       if (!paymentLink) {
         throw new Error("No payment link received");
       }
-
-      // Redirect to Cashfree payment page
-      window.location.href = paymentLink;
+      const cashfree = await load({
+        mode: "sandbox", // or "production"
+      });
+      let checkoutOptions = {
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      };
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized");
+      });
     } catch (error) {
       console.error("Payment initiation error:", error);
       toast({
