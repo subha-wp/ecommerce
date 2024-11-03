@@ -12,7 +12,6 @@ import {
 import Image from "next/image";
 
 const images = [
-  "https://gist.github.com/user-attachments/assets/f7aed5a1-d4c0-43c7-9515-1cc3d2dc610c",
   "https://gist.github.com/user-attachments/assets/8bde1def-65f9-40f1-bd28-f0edfd4b5917",
   "https://gist.github.com/user-attachments/assets/9264155d-4c1a-4123-a393-0f98ba89b710",
   "https://gist.github.com/user-attachments/assets/0995743a-7773-4f34-a1f5-d802c9699e2e",

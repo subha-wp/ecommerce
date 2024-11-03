@@ -32,7 +32,7 @@ export default async function Home() {
     <main className="container mx-auto max-w-7xl p-2">
       <SubcategoryGrid categories={categories2} />
       <HeroSection />
-      <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members ⚪ Sale Start from 27th OCT #RELEASEWALIDAY" />
+      <ScrollingText text="15% instant discount on prepaid orders ⚪ 25% instant discount For Prime Members" />
       <div>
         <Link href={`/products/cm2ommbpj0000gi2fg62px7ez`}>
           <Image
