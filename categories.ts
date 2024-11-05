@@ -12,6 +12,10 @@ export const categories = [
     subcategories: ["Wall Painting", "Home Lighting"],
   },
   {
+    name: "Kitchen",
+    subcategories: ["Electric Tools"],
+  },
+  {
     name: "Coupon",
     subcategories: [],
   },
