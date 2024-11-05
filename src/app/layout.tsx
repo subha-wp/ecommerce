@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import SessionProvider from "./SessionProvider";
 import { validateRequest } from "@/auth";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,8 +19,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Bazaar",
-  description: "",
+  title: "Zaptray",
+  description: "Apna Galiwala Dukaan",
 };
 
 export default async function RootLayout({
@@ -31,6 +32,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="w-full">
+        <GoogleAnalytics gaId="G-J8ERQE5JMX" />
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"

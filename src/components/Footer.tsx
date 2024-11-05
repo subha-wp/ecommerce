@@ -5,6 +5,7 @@ import visa from "@/assets/gateway/visa.webp";
 import mastercard from "@/assets/gateway/Master-Card.webp";
 import upi from "@/assets/gateway/UPI.webp";
 import rupay from "@/assets/gateway/rupay_payment_card.webp";
+import googlePlayIcon from "@/assets/google-play-badge.png";
 
 const Footer = () => {
   return (
@@ -31,6 +32,14 @@ const Footer = () => {
               <Link href="/contact">Contact</Link>
             </li>
           </ul>
+          <Link href="https://play.google.com/store/apps/details?id=com.devcodersubha.zaptray">
+            <Image
+              src={googlePlayIcon}
+              width={120}
+              height={35}
+              alt="playicon"
+            />
+          </Link>
           <div className="flex items-center gap-1 pt-2">
             <Image
               src={visa}
