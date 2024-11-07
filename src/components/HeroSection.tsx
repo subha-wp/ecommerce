@@ -12,10 +12,7 @@ import {
 import Image from "next/image";
 
 const images = [
-  "https://gist.github.com/user-attachments/assets/8bde1def-65f9-40f1-bd28-f0edfd4b5917",
-  "https://gist.github.com/user-attachments/assets/9264155d-4c1a-4123-a393-0f98ba89b710",
-  "https://gist.github.com/user-attachments/assets/0995743a-7773-4f34-a1f5-d802c9699e2e",
-  "https://gist.github.com/user-attachments/assets/99394a53-5051-4070-aab2-5967467274b9",
+  "https://gist.github.com/user-attachments/assets/3aa8d974-af11-41fd-8abe-adcb6e2f8ceb",
 ];
 
 const HeroSection: React.FC = () => {
