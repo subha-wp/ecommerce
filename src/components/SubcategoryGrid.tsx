@@ -30,7 +30,7 @@ export default function SubcategoryGrid({
             href={`/products?subcategory=${encodeURIComponent(subcategory.name)}`}
             className="flex flex-col items-center space-y-2"
           >
-            <div className="relative h-[35px] w-[35px] overflow-hidden rounded-full">
+            <div className="relative h-[50px] w-[50px] overflow-hidden rounded-full">
               <Image
                 src={subcategory.image}
                 alt={subcategory.name}

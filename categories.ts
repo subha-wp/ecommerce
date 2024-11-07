@@ -1,8 +1,8 @@
 export const categories = [
-  // {
-  //   name: "Electronics",
-  //   subcategories: ["Smartphones", "Refrigerator", "AC", "TV"],
-  // },
+  {
+    name: "Electronics",
+    subcategories: ["AC", "TV", "lights", "viral-gadget"],
+  },
   {
     name: "Home Appliances",
     subcategories: ["Washing Machine"],
@@ -23,41 +23,6 @@ export const categories = [
 
 export const categories2 = [
   {
-    name: "Electronics",
-    subcategories: [
-      {
-        name: "Smartphones",
-        image:
-          "https://gist.github.com/user-attachments/assets/7516c79b-19e5-4279-ab71-2bd4899b38f0",
-      },
-      {
-        name: "Refrigerator",
-        image:
-          "https://gist.github.com/user-attachments/assets/95073a11-1a8f-438e-9ec4-9b5afd7c30c7",
-      },
-      {
-        name: "AC",
-        image:
-          "https://gist.github.com/user-attachments/assets/3cd5f3df-4c74-4efd-83bf-6c8d540b6a17",
-      },
-      {
-        name: "TV",
-        image:
-          "https://gist.github.com/user-attachments/assets/c880a664-d99b-4b88-a2ba-009ab56acdcd",
-      },
-    ],
-  },
-  {
-    name: "Home Appliances",
-    subcategories: [
-      {
-        name: "Washing Machine",
-        image:
-          "https://gist.github.com/user-attachments/assets/1870d3ff-22a1-4f59-a940-d6b61f58a0c3",
-      },
-    ],
-  },
-  {
     name: "Home Decor",
     subcategories: [
       {
@@ -69,6 +34,21 @@ export const categories2 = [
         name: "Home Lighting",
         image:
           "https://gist.github.com/user-attachments/assets/65f26630-34ae-41e2-ab09-8b4dce7fef2a",
+      },
+    ],
+  },
+  {
+    name: "Electronics",
+    subcategories: [
+      {
+        name: "lights",
+        image:
+          "https://gist.github.com/user-attachments/assets/c7e29cb9-ddbb-414d-8b88-df6d971f6597",
+      },
+      {
+        name: "viral-gadget",
+        image:
+          "https://gist.github.com/user-attachments/assets/aeb1448b-68ab-4536-951b-7a4c82968d95",
       },
     ],
   },
