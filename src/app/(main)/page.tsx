@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import { ScrollingText } from "@/components/ScrollingText";
-import joinPrime from "@/assets/join-prime.jpg";
+
 import { CategorySubcategoryProducts } from "@/components/CategorySubcategoryProducts";
 import {
   getSubcategoriesByCategory,
@@ -10,11 +10,54 @@ import {
 import { categories, categories2 } from "../../../categories";
 import { Spinner } from "@/components/Spinner";
 import dynamic from "next/dynamic";
-import Link from "next/link";
-import Image from "next/image";
 
 import SubcategoryGrid from "@/components/SubcategoryGrid";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import { Metadata } from "next";
+
+// app/page.tsx
+export const metadata: Metadata = {
+  title: "ZapTray - Viral Gadgets, Lighting & Electronics",
+  description:
+    "Explore ZapTray for the latest viral gadgets, innovative lighting, and top electronics. Wholesale shopping made easy!",
+  keywords: [
+    "ZapTray",
+    "viral gadgets",
+    "electronics",
+    "lighting",
+    "tech gadgets",
+    "wholesale electronics",
+    "trending products",
+  ],
+  openGraph: {
+    title: "ZapTray - Viral Gadgets, Lighting & Electronics",
+    description:
+      "Shop ZapTray for the hottest gadgets, trending lighting, and must-have electronics. Wholesale shopping made easy!",
+    url: "https://zaptray.com",
+    siteName: "ZapTray",
+    images: [
+      {
+        url: "https://zaptray.com/android-chrome-512x512.png", // Replace with the actual URL for your OG image
+        width: 1200,
+        height: 630,
+        alt: "ZapTray viral gadgets and electronics products",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZapTray - Viral Gadgets, Lighting & Electronics",
+    description:
+      "Discover the latest in viral tech and gadgets at ZapTray. Wholesale shopping made easy!",
+    images: ["https://zaptray.com/android-chrome-512x512.png"], // Replace with the actual URL for your Twitter image
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+};
 
 const DynamicCategorySubcategoryProducts = dynamic(
   () =>
