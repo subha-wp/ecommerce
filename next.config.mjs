@@ -11,7 +11,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "gist.github.com",
-        // pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
+        
       },
       {
         protocol: "https",

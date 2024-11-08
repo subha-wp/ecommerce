@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
+import { trackFacebookEvent } from "@/components/FacebookPixel";
 
 type Address = {
   id: string;
@@ -125,6 +126,16 @@ export default function CheckoutForm({
       };
       cashfree.checkout(checkoutOptions).then((res) => {
         console.log("payment initialized");
+        // Track Purchase event
+        trackFacebookEvent("Purchase", {
+          content_type: "product",
+          contents: cart.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+          })),
+          currency: "INR",
+          value: totalAmount,
+        });
       });
     } catch (error) {
       console.error("Payment initiation error:", error);
@@ -165,6 +176,18 @@ export default function CheckoutForm({
         title: "Order Placed Successfully!",
         description: `Your order ID is ${order.id}. Thank you for your purchase.`,
       });
+
+      // Track Purchase event
+      trackFacebookEvent("Purchase", {
+        content_type: "product",
+        contents: cart.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+        })),
+        currency: "INR",
+        value: totalAmount,
+      });
+
       router.push(`/order-confirmation/${order.id}`);
     } catch (error) {
       console.error("Error creating order:", error);

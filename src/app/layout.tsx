@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import SessionProvider from "./SessionProvider";
 import { validateRequest } from "@/auth";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import FacebookPixel from "@/components/FacebookPixel";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +42,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <FacebookPixel />
           </ThemeProvider>
         </SessionProvider>
       </body>
