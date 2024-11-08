@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
@@ -14,6 +14,7 @@ declare global {
 export default function FacebookPixel() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (!FB_PIXEL_ID) return;
@@ -27,6 +28,7 @@ export default function FacebookPixel() {
     script.onload = () => {
       window.fbq("init", FB_PIXEL_ID);
       window.fbq("track", "PageView");
+      setIsLoaded(true);
     };
 
     return () => {
@@ -35,18 +37,19 @@ export default function FacebookPixel() {
   }, []);
 
   useEffect(() => {
-    if (!FB_PIXEL_ID) return;
-
-    // Track page views on route changes
-    window.fbq("track", "PageView");
-  }, [pathname, searchParams]);
+    if (isLoaded && FB_PIXEL_ID && typeof window.fbq === "function") {
+      window.fbq("track", "PageView");
+    }
+  }, [isLoaded, pathname, searchParams]);
 
   return null;
 }
 
 // Utility function to track custom events
 export const trackFacebookEvent = (eventName: string, eventParams = {}) => {
-  if (window.fbq) {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
     window.fbq("track", eventName, eventParams);
+  } else {
+    console.warn("Facebook Pixel is not initialized yet.");
   }
 };
