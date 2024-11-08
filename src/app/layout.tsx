@@ -6,7 +6,8 @@ import { ThemeProvider } from "next-themes";
 import SessionProvider from "./SessionProvider";
 import { validateRequest } from "@/auth";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import FacebookPixel from "@/components/FacebookPixel";
+import { Suspense } from "react";
+import { FacebookPixelEvents } from "@/components/pixel-events";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,7 +22,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Zaptray",
-  description: "Apna Galiwala Dukaan",
+  description: "Ab Wholesale hua Asaan",
 };
 
 export default async function RootLayout({
@@ -30,8 +31,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await validateRequest();
+
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="w-full">
         <GoogleAnalytics gaId="G-J8ERQE5JMX" />
         <SessionProvider session={session}>
@@ -42,7 +44,9 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <FacebookPixel />
+            <Suspense fallback={null}>
+              <FacebookPixelEvents />
+            </Suspense>
           </ThemeProvider>
         </SessionProvider>
       </body>
