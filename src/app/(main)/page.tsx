@@ -63,7 +63,7 @@ export default async function Home() {
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  href={`/products?category=${encodeURIComponent(category.name)}`}
+                  href={`/products?category=${encodeURIComponent(category.name)}&categoryId=${encodeURIComponent(category.id)}`}
                   className="inline-block"
                 >
                   <div className="group w-[100px] space-y-3">

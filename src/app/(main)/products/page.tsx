@@ -3,33 +3,30 @@ import { Suspense } from "react";
 import ProductList from "./ProductList";
 import { categories } from "../../../../categories";
 import { SubcategoryList } from "@/components/SubcategoryList";
+import { getSubcategoriesByCategoryId } from "@/lib/categories";
 
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: { category?: string; subcategory?: string };
+  searchParams: {
+    category?: string;
+    subcategory?: string;
+    categoryId?: string;
+  };
 }) {
   const category = searchParams.category;
   const subcategory = searchParams.subcategory;
+  const categoryId = searchParams.categoryId;
 
-  const categoryData = category
-    ? categories.find((cat) => cat.name === category)
-    : null;
+  const subcategories = await getSubcategoriesByCategoryId(categoryId);
 
   return (
-    <div className="container mx-auto max-w-7xl px-4">
-      <h1 className="my-4 text-xl font-bold">
-        {category
-          ? `${category} ${subcategory ? `- ${subcategory}` : ""}`
-          : "All Products"}
-      </h1>
-
-      {categoryData && (
+    <div className="container mx-auto max-w-7xl p-4">
+      {subcategories && (
         <div className="mb-6">
           <SubcategoryList
-            category={category}
-            subcategories={categoryData.subcategories}
-            selectedSubcategory={subcategory}
+            subcategories={subcategories}
+            categoryId={categoryId}
           />
         </div>
       )}

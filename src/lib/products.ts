@@ -21,8 +21,8 @@ export async function getProductById(id: string) {
       where: { id },
       include: {
         images: true,
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
+        category: { select: { name: true, id: true } },
+        subcategory: { select: { name: true, id: true } },
       },
     });
     return product;

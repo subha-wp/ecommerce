@@ -71,8 +71,8 @@ export default async function ProductPage({
       <Suspense fallback={<Spinner />}>
         <RelevantProducts
           productId={product.id}
-          category={product.category.name}
-          subcategory={product.subcategory?.name}
+          categoryId={product.category.id}
+          subcategoryId={product.subcategory?.id}
         />
       </Suspense>
     </div>

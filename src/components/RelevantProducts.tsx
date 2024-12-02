@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { categories } from "../../categories";
+
 import SingleProductUi from "./SingleProductUi";
 
 type Product = {
@@ -15,25 +14,19 @@ type Product = {
 
 export default function RelevantProducts({
   productId,
-  category,
-  subcategory,
+  categoryId,
+  subcategoryId,
 }: {
   productId: string;
-  category: string;
-  subcategory?: string;
+  categoryId: string;
+  subcategoryId?: string;
 }) {
   const [relevantProducts, setRelevantProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchRelevantProducts = async () => {
-      const categoryObj = categories.find((cat) => cat.name === category);
-      if (!categoryObj) {
-        console.error("Invalid category");
-        return;
-      }
-
       const response = await fetch(
-        `/api/products/relevant?productId=${productId}&category=${category}${subcategory ? `&subcategory=${subcategory}` : ""}`,
+        `/api/products/relevant?productId=${productId}&categoryId=${categoryId}${subcategoryId ? `&subcategoryId=${subcategoryId}` : ""}`,
       );
       if (response.ok) {
         const data = await response.json();
@@ -42,9 +35,11 @@ export default function RelevantProducts({
     };
 
     fetchRelevantProducts();
-  }, [productId, category, subcategory]);
+  }, [productId, categoryId, subcategoryId]);
 
   if (relevantProducts.length === 0) return null;
+
+  console.log("relevant product", relevantProducts);
 
   return (
     <div className="mt-12">
