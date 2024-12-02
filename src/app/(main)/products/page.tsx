@@ -9,19 +9,16 @@ export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: {
-    category?: string;
-    subcategory?: string;
     categoryId?: string;
+    subcategoryId?: string;
   };
 }) {
-  const category = searchParams.category;
-  const subcategory = searchParams.subcategory;
   const categoryId = searchParams.categoryId;
 
   const subcategories = await getSubcategoriesByCategoryId(categoryId);
 
   return (
-    <div className="container mx-auto max-w-7xl p-4">
+    <div className="container mx-auto max-w-7xl space-x-2 p-4">
       {subcategories && (
         <div className="mb-6">
           <SubcategoryList

@@ -23,8 +23,8 @@ export default function ProductList() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const subcategory = searchParams.get("subcategory");
+  const categoryId = searchParams.get("categoryId");
+  const subcategoryId = searchParams.get("subcategoryId");
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -37,8 +37,8 @@ export default function ProductList() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        ...(category && { category }),
-        ...(subcategory && { subcategory }),
+        ...(categoryId && { categoryId }),
+        ...(subcategoryId && { subcategoryId }),
       });
 
       const response = await fetch(`/api/products?${params}`);
@@ -59,14 +59,14 @@ export default function ProductList() {
     } finally {
       setLoading(false);
     }
-  }, [page, category, subcategory, loading, hasMore]);
+  }, [page, categoryId, subcategoryId, loading, hasMore]);
 
   useEffect(() => {
     setProducts([]);
     setPage(1);
     setHasMore(true);
     loadMoreProducts();
-  }, [category, subcategory]);
+  }, [categoryId, subcategoryId]);
 
   useEffect(() => {
     if (inView) {

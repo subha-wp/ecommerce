@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 type Subcategory = {
   image: string;
@@ -20,6 +22,16 @@ export function SubcategoryList({
   categoryId,
   subcategories,
 }: SubcategoryListProps) {
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
+    null,
+  );
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const subcategoryId = searchParams.get("subcategoryId");
+    setSelectedSubcategory(subcategoryId);
+  }, [searchParams]);
+
   return (
     <ScrollArea className="w-full">
       <div className="flex space-x-4 p-1">
@@ -28,10 +40,17 @@ export function SubcategoryList({
             key={subcategory.id}
             href={`/products?categoryId=${categoryId}&subcategoryId=${subcategory.id}`}
             className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            onClick={() => setSelectedSubcategory(subcategory.id)}
           >
             <Button
-              variant="outline"
-              className="flex items-center space-x-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-secondary"
+              variant={
+                selectedSubcategory === subcategory.id ? "default" : "outline"
+              }
+              className={`flex items-center space-x-2 rounded-full py-1 pl-1 pr-3 transition-colors ${
+                selectedSubcategory === subcategory.id
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
             >
               <div className="relative aspect-square h-8 w-8 overflow-hidden rounded-full">
                 {subcategory.image ? (
