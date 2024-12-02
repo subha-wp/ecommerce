@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
-import { validateRequest } from "@/auth";
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const category = searchParams.get("category");
-  const subcategory = searchParams.get("subcategory");
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = 10;
-  const skip = (page - 1) * limit;
-
   try {
+    const searchParams = request.nextUrl.searchParams;
+    const categoryId = searchParams.get("categoryId");
+    const subcategoryId = searchParams.get("subcategoryId");
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    // Build where clause based on filters
     const where: any = {};
-    if (category) where.category = category;
-    if (subcategory) where.subcategory = subcategory;
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+    if (subcategoryId) {
+      where.subcategoryId = subcategoryId;
+    }
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({
@@ -21,15 +25,35 @@ export async function GET(request: NextRequest) {
         take: limit,
         skip,
         orderBy: { createdAt: "desc" },
-        include: { images: true },
+        include: {
+          images: {
+            select: { url: true },
+          },
+          category: {
+            select: { id: true, name: true },
+          },
+          subcategory: {
+            select: { id: true, name: true },
+          },
+        },
       }),
       prisma.product.count({ where }),
     ]);
+
+    const categories = await prisma.category.findMany({
+      select: { id: true, name: true },
+    });
+
+    const subcategories = await prisma.subcategory.findMany({
+      select: { id: true, name: true, categoryId: true },
+    });
 
     return NextResponse.json({
       products,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
+      categories,
+      subcategories,
     });
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -42,11 +66,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { user } = await validateRequest();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const data = await req.json();
     const {
       title,
@@ -55,8 +74,10 @@ export async function POST(req: NextRequest) {
       minPrice,
       sizes,
       images,
-      category,
-      subcategory,
+      categoryId,
+      subcategoryId,
+      isFeatured,
+      isVisible,
     } = data;
 
     const product = await prisma.product.create({
@@ -66,14 +87,18 @@ export async function POST(req: NextRequest) {
         price,
         minPrice,
         sizes,
-        category,
-        subcategory,
+        categoryId,
+        subcategoryId,
+        isFeatured,
+        isVisible,
         images: {
           create: images.map((url: string) => ({ url })),
         },
       },
       include: {
         images: true,
+        category: true,
+        subcategory: true,
       },
     });
 

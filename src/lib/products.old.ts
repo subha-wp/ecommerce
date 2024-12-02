@@ -5,8 +5,6 @@ export async function getProducts() {
   try {
     const products = await prisma.product.findMany({
       include: { images: true },
-      category: { select: { name: true } },
-      subcategory: { select: { name: true } },
     });
     return products;
   } catch (error) {
@@ -19,11 +17,7 @@ export async function getProductById(id: string) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
-      include: {
-        images: true,
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
-      },
+      include: { images: true },
     });
     return product;
   } catch (error) {
@@ -40,11 +34,6 @@ export async function getProductsByCategory(
     const products = await prisma.product.findMany({
       where: { category },
       take: limit,
-      include: {
-        images: true,
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
-      },
 
       orderBy: { createdAt: "desc" },
     });
@@ -91,8 +80,6 @@ export async function getProductsByCategoryAndSubcategory(
           select: { url: true },
           take: 1,
         },
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
       },
       take: limit,
     });
@@ -122,8 +109,6 @@ export async function getAdminProducts(
             select: { url: true },
             take: 1,
           },
-          category: { select: { name: true } },
-          subcategory: { select: { name: true } },
         },
         orderBy: {
           createdAt: "desc",
@@ -148,8 +133,6 @@ export async function getFeaturedProducts(limit?: number) {
       },
       include: {
         images: true,
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
       },
       take: limit,
     });

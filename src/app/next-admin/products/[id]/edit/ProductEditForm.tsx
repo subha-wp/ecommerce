@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "../../../../../../categories";
 
 type ProductImage = {
   id: string;
   url: string;
+};
+
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Subcategory = {
+  id: string;
+  name: string;
 };
 
 type Product = {
@@ -29,16 +38,44 @@ type Product = {
   minPrice: number;
   sizes: string[];
   images: ProductImage[];
-  category: string;
-  subcategory: string | null;
+  categoryId: string;
+  subcategoryId: string | null;
   isFeatured: boolean;
   isVisible: boolean;
 };
 
 export default function ProductEditForm({ product }: { product: Product }) {
   const [formData, setFormData] = useState(product);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch("/api/categories");
+      const data = await response.json();
+      setCategories(data);
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      if (formData.categoryId) {
+        const response = await fetch(
+          `/api/categories/${formData.categoryId}/subcategories`,
+        );
+        const data = await response.json();
+        setSubcategories(data);
+      } else {
+        setSubcategories([]);
+      }
+    };
+
+    fetchSubcategories();
+  }, [formData.categoryId]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -54,6 +91,9 @@ export default function ProductEditForm({ product }: { product: Product }) {
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "categoryId") {
+      setFormData((prev) => ({ ...prev, subcategoryId: null }));
+    }
   };
 
   const handleImageChange = (index: number, value: string) => {
@@ -82,7 +122,10 @@ export default function ProductEditForm({ product }: { product: Product }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          images: formData.images.map((image) => ({ url: image.url })),
+        }),
       });
 
       if (!response.ok) {
@@ -219,21 +262,21 @@ export default function ProductEditForm({ product }: { product: Product }) {
       </div>
       <div>
         <label
-          htmlFor="category"
+          htmlFor="categoryId"
           className="block text-sm font-medium text-gray-700"
         >
           Category
         </label>
         <Select
-          onValueChange={(value) => handleSelectChange("category", value)}
-          defaultValue={formData.category}
+          onValueChange={(value) => handleSelectChange("categoryId", value)}
+          defaultValue={formData.categoryId}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
             {categories.map((category) => (
-              <SelectItem key={category.name} value={category.name}>
+              <SelectItem key={category.id} value={category.id}>
                 {category.name}
               </SelectItem>
             ))}
@@ -242,26 +285,24 @@ export default function ProductEditForm({ product }: { product: Product }) {
       </div>
       <div>
         <label
-          htmlFor="subcategory"
+          htmlFor="subcategoryId"
           className="block text-sm font-medium text-gray-700"
         >
           Subcategory
         </label>
         <Select
-          onValueChange={(value) => handleSelectChange("subcategory", value)}
-          defaultValue={formData.subcategory || undefined}
+          onValueChange={(value) => handleSelectChange("subcategoryId", value)}
+          defaultValue={formData.subcategoryId || undefined}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a subcategory" />
           </SelectTrigger>
           <SelectContent>
-            {categories
-              .find((cat) => cat.name === formData.category)
-              ?.subcategories.map((subcat) => (
-                <SelectItem key={subcat} value={subcat}>
-                  {subcat}
-                </SelectItem>
-              ))}
+            {subcategories.map((subcat) => (
+              <SelectItem key={subcat.id} value={subcat.id}>
+                {subcat.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

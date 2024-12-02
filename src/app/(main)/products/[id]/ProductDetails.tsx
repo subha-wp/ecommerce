@@ -39,22 +39,6 @@ export default function ProductDetails({
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
-  // const handleBargain = () => {
-  //   const offer = parseFloat(offerPrice);
-  //   if (offer >= product.minPrice) {
-  //     toast({
-  //       title: "Offer Accepted!",
-  //       description: "You can now place your order at this price.",
-  //     });
-  //   } else {
-  //     toast({
-  //       title: "Offer Rejected",
-  //       description: "Sorry, we cannot accept this offer.",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // };
-
   const handleAddToCart = () => {
     addToCart({ ...product, quantity, size: selectedSize });
     toast({

@@ -8,11 +8,6 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const { user } = await validateRequest();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const productId = params.id;
     const data = await req.json();
     const {
@@ -22,29 +17,11 @@ export async function PUT(
       minPrice,
       sizes,
       images,
-      category,
-      subcategory,
+      categoryId,
+      subcategoryId,
+      isFeatured,
+      isVisible,
     } = data;
-
-    // Fetch the current product to get existing image IDs
-    const currentProduct = await prisma.product.findUnique({
-      where: { id: productId },
-      include: { images: true },
-    });
-
-    if (!currentProduct) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
-
-    // Prepare image operations
-    const existingImageIds = new Set(
-      currentProduct.images.map((img) => img.id),
-    );
-    const imagesToCreate = images
-      .filter((img) => !existingImageIds.has(img.id))
-      .map((img) => ({ url: img.url }));
-    const imagesToUpdate = images.filter((img) => existingImageIds.has(img.id));
-    const imageIdsToKeep = new Set(imagesToUpdate.map((img) => img.id));
 
     // Update the product
     const updatedProduct = await prisma.product.update({
@@ -55,25 +32,35 @@ export async function PUT(
         price: parseFloat(price),
         minPrice: parseFloat(minPrice),
         sizes,
-        category,
-        subcategory,
-        images: {
-          deleteMany: {
-            id: { notIn: Array.from(imageIdsToKeep) },
-          },
-          create: imagesToCreate,
-          update: imagesToUpdate.map((img) => ({
-            where: { id: img.id },
-            data: { url: img.url },
-          })),
-        },
-      },
-      include: {
-        images: true,
+        categoryId,
+        subcategoryId,
+        isFeatured,
+        isVisible,
       },
     });
 
-    return NextResponse.json(updatedProduct);
+    // Update images
+    await prisma.productImage.deleteMany({ where: { productId } });
+    if (images && images.length > 0) {
+      await prisma.productImage.createMany({
+        data: images.map((image: { url: string }) => ({
+          url: image.url,
+          productId,
+        })),
+      });
+    }
+
+    // Fetch the updated product with related data
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        images: true,
+        category: true,
+        subcategory: true,
+      },
+    });
+
+    return NextResponse.json(product);
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json(

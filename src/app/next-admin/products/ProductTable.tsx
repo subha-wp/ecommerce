@@ -32,11 +32,13 @@ type Product = {
   description: string;
   minPrice: number;
   sizes: string[];
-  category: string;
-  subcategory: string | null;
+  categoryId: string;
+  subcategoryId: string | null;
   images: { url: string }[];
   isFeatured: boolean;
   isVisible: boolean;
+  category: { name: string };
+  subcategory: { name: string } | null;
 };
 
 type ProductTableProps = {
@@ -112,7 +114,15 @@ export default function ProductTable({
 
       toast({
         title: "Product updated",
-        description: `Product has been ${field === "isFeatured" ? (value ? "featured" : "unfeatured") : value ? "made visible" : "hidden"}.`,
+        description: `Product has been ${
+          field === "isFeatured"
+            ? value
+              ? "featured"
+              : "unfeatured"
+            : value
+              ? "made visible"
+              : "hidden"
+        }.`,
       });
     } catch (error) {
       console.error(`Error updating product ${field}:`, error);
@@ -186,8 +196,8 @@ export default function ProductTable({
                 />
               </TableCell>
               <TableCell>{product.title.substring(0, 50)}...</TableCell>
-              <TableCell>{product.category}</TableCell>
-              <TableCell>{product.subcategory}</TableCell>
+              <TableCell>{product.category.name}</TableCell>
+              <TableCell>{product.subcategory?.name || "N/A"}</TableCell>
               <TableCell>₹{product.price.toFixed(2)}</TableCell>
               <TableCell>₹{product.minPrice.toFixed(2)}</TableCell>
               <TableCell>

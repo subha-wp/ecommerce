@@ -1,11 +1,9 @@
-// @ts-nocheck
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
-import { categories } from "../../../../../categories";
 import { Spinner } from "@/components/Spinner";
 
 const ProductDetails = dynamic(() => import("./ProductDetails"), {
@@ -37,11 +35,6 @@ export default async function ProductPage({
   const { user } = await validateRequest();
   const userId = user?.id;
   const isFavorite = userId ? await getUserFavorites(userId, params.id) : false;
-
-  const categoryObj = categories.find((cat) => cat.name === product.category);
-  if (!categoryObj) {
-    notFound();
-  }
 
   // Calculate discount percentage
   const discountPercentage = Math.round(
@@ -78,12 +71,8 @@ export default async function ProductPage({
       <Suspense fallback={<Spinner />}>
         <RelevantProducts
           productId={product.id}
-          category={product.category}
-          subcategory={
-            categoryObj.subcategories.includes(product.subcategory || "")
-              ? product.subcategory
-              : undefined
-          }
+          category={product.category.name}
+          subcategory={product.subcategory?.name}
         />
       </Suspense>
     </div>
