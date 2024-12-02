@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BadgePercent,
+  FolderTree,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import { useSidebar } from "./SidebarContext";
 
 const sidebarItems = [
   { name: "Products", href: "/next-admin/products", icon: Package },
+  { name: "Categories", href: "/next-admin/categories", icon: FolderTree },
   { name: "Coupons", href: "/next-admin/coupons", icon: BadgePercent },
   { name: "Customers", href: "/next-admin/customers", icon: Users },
   { name: "Orders", href: "/next-admin/orders", icon: ShoppingCart },

@@ -34,6 +34,31 @@ model Session {
   @@map("sessions")
 }
 
+model Category {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String?
+  image         String?
+  subcategories Subcategory[]
+  products      Product[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Subcategory {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([categoryId, name])
+}
+
 model Product {
   id          String   @id @default(cuid())
   title       String
@@ -42,8 +67,10 @@ model Product {
   minPrice    Float
   sizes       String[]
   images      ProductImage[]
-  category    String
-  subcategory String?
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  subcategoryId String?
+  subcategory Subcategory? @relation(fields: [subcategoryId], references: [id])
   isFeatured  Boolean  @default(false)
   isVisible   Boolean  @default(true)
   createdAt   DateTime @default(now())
