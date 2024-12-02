@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+//@ts-nocheck
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import { useSearchParams } from "next/navigation";
-
+import { categories } from "../../../../categories";
 import SingleProductUi from "@/components/SingleProductUi";
 import { Spinner } from "@/components/Spinner";
+import { SubcategoryList } from "@/components/SubcategoryList";
 
 type Product = {
   id: string;
@@ -66,6 +68,10 @@ export default function ProductList() {
     }
   }, [inView, loadMoreProducts]);
 
+  const categoryData = category
+    ? categories.find((cat) => cat.name === category)
+    : null;
+
   return (
     <div className="container mx-auto max-w-7xl px-4">
       <h1 className="my-4 text-xl font-bold">
@@ -73,11 +79,25 @@ export default function ProductList() {
           ? `${category} ${subcategory ? `- ${subcategory}` : ""}`
           : "All Products"}
       </h1>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+
+      {/* Subcategories */}
+      {categoryData && (
+        <div className="mb-6">
+          <SubcategoryList
+            category={category}
+            subcategories={categoryData.subcategories}
+            selectedSubcategory={subcategory}
+          />
+        </div>
+      )}
+
+      {/* Products Grid */}
+      {/* <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
         {products.map((product) => (
           <SingleProductUi key={product.id} product={product} />
         ))}
-      </div>
+      </div> */}
+
       {loading && (
         <div className="my-4 flex justify-center">
           <Spinner />

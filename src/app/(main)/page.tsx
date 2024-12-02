@@ -8,9 +8,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
 import { Spinner } from "@/components/Spinner";
-import Autoplay from "embla-carousel-autoplay";
 
 // Carousel images
 const carouselImages = [
@@ -36,11 +34,6 @@ export default async function Home() {
             align: "start",
             loop: true,
           }}
-          plugins={[
-            Autoplay({
-              delay: 5000,
-            }),
-          ]}
           className="w-full"
         >
           <CarouselContent>
@@ -63,37 +56,29 @@ export default async function Home() {
 
       {/* Categories Section */}
       <section>
-        <h2 className="mb-4 text-2xl font-bold">Categories</h2>
+        <h2 className="text-2xl font-bold">Categories</h2>
         <Suspense fallback={<Spinner />}>
           <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex space-x-4 pb-4">
+            <div className="flex space-x-4">
               {categories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/products?category=${encodeURIComponent(category.name)}`}
                   className="inline-block"
                 >
-                  <div className="group w-[200px] space-y-3">
-                    <div className="relative aspect-square overflow-hidden rounded-lg">
+                  <div className="group w-[100px] space-y-3">
+                    <div className="relative aspect-square overflow-hidden rounded-full border">
                       {category.image ? (
                         <Image
                           src={category.image}
                           alt={category.name}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                          className="object-contain transition-transform duration-300 group-hover:scale-110"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center bg-gray-100">
                           <span className="text-gray-400">No image</span>
                         </div>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      <h3 className="font-semibold">{category.name}</h3>
-                      {category.subcategories.length > 0 && (
-                        <p className="text-sm text-gray-500">
-                          {category.subcategories.length} subcategories
-                        </p>
                       )}
                     </div>
                   </div>
