@@ -1,150 +1,109 @@
 import { Suspense } from "react";
-import HeroSection from "@/components/HeroSection";
-import { ScrollingText } from "@/components/ScrollingText";
-
-import { CategorySubcategoryProducts } from "@/components/CategorySubcategoryProducts";
+import Link from "next/link";
+import Image from "next/image";
+import { getCategories } from "@/lib/categories";
 import {
-  getSubcategoriesByCategory,
-  getProductsByCategoryAndSubcategory,
-} from "@/lib/products";
-import { categories, categories2 } from "../../../categories";
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 import { Spinner } from "@/components/Spinner";
-import dynamic from "next/dynamic";
+import Autoplay from "embla-carousel-autoplay";
 
-import SubcategoryGrid from "@/components/SubcategoryGrid";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import { Metadata } from "next";
-
-// app/page.tsx
-export const metadata: Metadata = {
-  title: "ZapTray - Viral Gadgets, Lighting & Electronics",
-  description:
-    "Explore ZapTray for the latest viral gadgets, innovative lighting, and top electronics. Wholesale shopping made easy!",
-  keywords: [
-    "ZapTray",
-    "viral gadgets",
-    "electronics",
-    "lighting",
-    "tech gadgets",
-    "wholesale electronics",
-    "trending products",
-  ],
-  openGraph: {
-    title: "ZapTray - Viral Gadgets, Lighting & Electronics",
-    description:
-      "Shop ZapTray for the hottest gadgets, trending lighting, and must-have electronics. Wholesale shopping made easy!",
-    url: "https://zaptray.com",
-    siteName: "ZapTray",
-    images: [
-      {
-        url: "https://zaptray.com/android-chrome-512x512.png", // Replace with the actual URL for your OG image
-        width: 1200,
-        height: 630,
-        alt: "ZapTray viral gadgets and electronics products",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ZapTray - Viral Gadgets, Lighting & Electronics",
-    description:
-      "Discover the latest in viral tech and gadgets at ZapTray. Wholesale shopping made easy!",
-    images: ["https://zaptray.com/android-chrome-512x512.png"], // Replace with the actual URL for your Twitter image
-  },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
-};
-
-const DynamicCategorySubcategoryProducts = dynamic(
-  () =>
-    import("@/components/CategorySubcategoryProducts").then(
-      (mod) => mod.CategorySubcategoryProducts,
-    ),
+// Carousel images
+const carouselImages = [
   {
-    loading: () => <Spinner />,
-    ssr: false,
+    src: "https://gist.github.com/user-attachments/assets/3aa8d974-af11-41fd-8abe-adcb6e2f8ceb",
+    alt: "Promotional Banner 1",
   },
-);
+  {
+    src: "https://gist.github.com/user-attachments/assets/7bde22de-5da4-46ca-87d3-2a5a8f35daca",
+    alt: "Promotional Banner 2",
+  },
+];
 
 export default async function Home() {
-  return (
-    <main className="container mx-auto max-w-7xl p-2">
-      <SubcategoryGrid categories={categories2} />
-      <HeroSection />
-      <ScrollingText text="5% instant discount on order above ₹2000 ⚪ 15% instant discount on order above ₹3000" />
-
-      <Suspense fallback={<Spinner />}>
-        <FeaturedProducts />
-      </Suspense>
-      <div className="my-4 space-y-12">
-        {categories.map((category) => (
-          <Suspense key={category.name} fallback={<Spinner />}>
-            <CategoryWrapper category={category} />
-          </Suspense>
-        ))}
-      </div>
-    </main>
-  );
-}
-
-async function CategoryWrapper({
-  category,
-}: {
-  category: { name: string; subcategories: string[] };
-}) {
-  if (category.subcategories.length === 0) {
-    const products = await getProductsByCategoryAndSubcategory(
-      category.name,
-      null,
-      10,
-    );
-    return (
-      <DynamicCategorySubcategoryProducts
-        category={category.name}
-        subcategory={null}
-        products={products}
-      />
-    );
-  }
+  const categories = await getCategories();
 
   return (
-    <div className="space-y-8">
-      {category.subcategories.map((subcategory) => (
-        <Suspense
-          key={`${category.name}-${subcategory}`}
-          fallback={<Spinner />}
+    <main className="container mx-auto max-w-7xl space-y-8 p-4">
+      {/* Hero Carousel */}
+      <section className="relative">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          plugins={[
+            Autoplay({
+              delay: 5000,
+            }),
+          ]}
+          className="w-full"
         >
-          <SubcategoryProductsWrapper
-            category={category.name}
-            subcategory={subcategory}
-          />
-        </Suspense>
-      ))}
-    </div>
-  );
-}
+          <CarouselContent>
+            {carouselImages.map((image, index) => (
+              <CarouselItem key={index}>
+                <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </section>
 
-async function SubcategoryProductsWrapper({
-  category,
-  subcategory,
-}: {
-  category: string;
-  subcategory: string;
-}) {
-  const products = await getProductsByCategoryAndSubcategory(
-    category,
-    subcategory,
-    10,
-  );
-  return (
-    <DynamicCategorySubcategoryProducts
-      category={category}
-      subcategory={subcategory}
-      products={products}
-    />
+      {/* Categories Section */}
+      <section>
+        <h2 className="mb-4 text-2xl font-bold">Categories</h2>
+        <Suspense fallback={<Spinner />}>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex space-x-4 pb-4">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${encodeURIComponent(category.name)}`}
+                  className="inline-block"
+                >
+                  <div className="group w-[200px] space-y-3">
+                    <div className="relative aspect-square overflow-hidden rounded-lg">
+                      {category.image ? (
+                        <Image
+                          src={category.image}
+                          alt={category.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-gray-100">
+                          <span className="text-gray-400">No image</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <h3 className="font-semibold">{category.name}</h3>
+                      {category.subcategories.length > 0 && (
+                        <p className="text-sm text-gray-500">
+                          {category.subcategories.length} subcategories
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </Suspense>
+      </section>
+    </main>
   );
 }
