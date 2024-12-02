@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { categories } from "../../../../../categories";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const productId = searchParams.get("productId");
-  const category = searchParams.get("category");
-  const subcategory = searchParams.get("subcategory");
+  const categoryId = searchParams.get("categoryId");
+  const subcategoryId = searchParams.get("subcategoryId");
 
-  if (!productId || !category) {
+  if (!productId || !categoryId) {
     return NextResponse.json(
       { error: "Missing required parameters" },
       { status: 400 },
     );
-  }
-
-  const categoryObj = categories.find((cat) => cat.name === category);
-  if (!categoryObj) {
-    return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
 
   try {
@@ -27,16 +21,20 @@ export async function GET(req: NextRequest) {
       where: {
         AND: [
           { id: { not: productId } },
-          { category: category },
-          subcategory && categoryObj.subcategories.includes(subcategory)
-            ? { subcategory: subcategory }
-            : {},
+          { categoryId: categoryId },
+          subcategoryId ? { subcategoryId: subcategoryId } : {},
         ],
       },
       include: {
         images: {
           select: { url: true },
           take: 1,
+        },
+        category: {
+          select: { name: true },
+        },
+        subcategory: {
+          select: { name: true },
         },
       },
       take: 4,
