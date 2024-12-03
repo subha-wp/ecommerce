@@ -95,11 +95,6 @@ export async function POST(req: NextRequest) {
           create: images.map((url: string) => ({ url })),
         },
       },
-      include: {
-        images: true,
-        category: true,
-        subcategory: true,
-      },
     });
 
     return NextResponse.json(product);
