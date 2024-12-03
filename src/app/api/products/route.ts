@@ -74,26 +74,63 @@ export async function POST(req: NextRequest) {
       minPrice,
       sizes,
       images,
-      categoryId,
-      subcategoryId,
-      isFeatured,
-      isVisible,
+      category,
+      subcategory,
+      isFeatured = false,
+      isVisible = true,
     } = data;
 
+    // Find or create category
+    let categoryRecord = await prisma.category.findFirst({
+      where: { name: category },
+    });
+
+    if (!categoryRecord) {
+      categoryRecord = await prisma.category.create({
+        data: { name: category },
+      });
+    }
+
+    // Find or create subcategory if provided
+    let subcategoryRecord = null;
+    if (subcategory) {
+      subcategoryRecord = await prisma.subcategory.findFirst({
+        where: {
+          name: subcategory,
+          categoryId: categoryRecord.id,
+        },
+      });
+
+      if (!subcategoryRecord) {
+        subcategoryRecord = await prisma.subcategory.create({
+          data: {
+            name: subcategory,
+            categoryId: categoryRecord.id,
+          },
+        });
+      }
+    }
+
+    // Create the product
     const product = await prisma.product.create({
       data: {
         title,
         description,
-        price,
-        minPrice,
+        price: Number(price),
+        minPrice: Number(minPrice),
         sizes,
-        categoryId,
-        subcategoryId,
+        categoryId: categoryRecord.id,
+        subcategoryId: subcategoryRecord?.id,
         isFeatured,
         isVisible,
         images: {
           create: images.map((url: string) => ({ url })),
         },
+      },
+      include: {
+        images: true,
+        category: true,
+        subcategory: true,
       },
     });
 
