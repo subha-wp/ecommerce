@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -25,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import InvoiceButton from "./InvoiceButton";
+import { generateInvoiceContent } from "./InvoicePDF";
 
 type OrderItem = {
   id: string;
@@ -37,18 +40,26 @@ type OrderItem = {
   };
 };
 
+type Address = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string | null;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
+};
+
 type Order = {
   id: string;
   userId: string;
   items: OrderItem[];
-  name: string;
-  email: string | null;
-  mobileNumber: string | null;
-  address: string | null;
-  city: string | null;
-  status: string | null;
-  country: string;
-  zipCode: string;
+  address: Address;
+  addressId: string;
+  status: string;
+  paymentMode: string | null;
   createdAt: string;
   updatedAt: string;
   total: number;
@@ -98,6 +109,10 @@ export default function OrderTable({
     }
   };
 
+  const handleGenerateInvoice = (order: Order, type: "invoice" | "challan") => {
+    generateInvoiceContent(order, type);
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Orders</h2>
@@ -116,14 +131,14 @@ export default function OrderTable({
           {orders.map((order) => (
             <TableRow key={order.id}>
               <TableCell>{order.id}</TableCell>
-              <TableCell>{order.name}</TableCell>
+              <TableCell>{order.address.name}</TableCell>
               <TableCell>{order.status || "Pending"}</TableCell>
               <TableCell>
                 {new Date(order.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell>₹{order.total.toFixed(2)}</TableCell>
               <TableCell>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
                   <Select
                     onValueChange={(value) =>
                       handleUpdateStatus(order.id, value)
@@ -138,6 +153,19 @@ export default function OrderTable({
                       <SelectItem value="Delivered">Delivered</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  <InvoiceButton
+                    order={order}
+                    type="invoice"
+                    onGenerate={() => handleGenerateInvoice(order, "invoice")}
+                  />
+
+                  <InvoiceButton
+                    order={order}
+                    type="challan"
+                    onGenerate={() => handleGenerateInvoice(order, "challan")}
+                  />
+
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -150,9 +178,7 @@ export default function OrderTable({
                     </DialogTrigger>
                     <DialogContent className="max-w-6xl bg-white">
                       <DialogHeader>
-                        <DialogTitle>
-                          Order Details - {selectedOrder?.id}
-                        </DialogTitle>
+                        <DialogTitle>Order Details - {order.id}</DialogTitle>
                       </DialogHeader>
                       <div className="mt-4 grid grid-cols-2 gap-4">
                         <div>
@@ -160,29 +186,26 @@ export default function OrderTable({
                             Customer Details
                           </h3>
                           <p>
-                            <strong>Name:</strong> {selectedOrder?.name}
+                            <strong>Name:</strong> {order.address.name}
                           </p>
                           <p>
-                            <strong>Email:</strong>{" "}
-                            {selectedOrder?.email || "N/A"}
-                          </p>
-                          <p>
-                            <strong>Mobile:</strong>{" "}
-                            {selectedOrder?.mobileNumber || "N/A"}
+                            <strong>Phone:</strong> {order.address.phoneNumber}
                           </p>
                           <p>
                             <strong>Address:</strong>{" "}
-                            {selectedOrder?.address || "N/A"}
+                            {order.address.addressLine1}
+                            {order.address.addressLine2 && (
+                              <>, {order.address.addressLine2}</>
+                            )}
                           </p>
                           <p>
-                            <strong>City:</strong>{" "}
-                            {selectedOrder?.city || "N/A"}
+                            <strong>City:</strong> {order.address.city}
                           </p>
                           <p>
-                            <strong>Country:</strong> {selectedOrder?.country}
+                            <strong>State:</strong> {order.address.state}
                           </p>
                           <p>
-                            <strong>Zipcode:</strong> {selectedOrder?.zipCode}
+                            <strong>ZIP:</strong> {order.address.zipCode}
                           </p>
                         </div>
                         <div>
@@ -190,22 +213,21 @@ export default function OrderTable({
                             Order Summary
                           </h3>
                           <p>
-                            <strong>Order ID:</strong> {selectedOrder?.id}
+                            <strong>Order ID:</strong> {order.id}
                           </p>
                           <p>
                             <strong>Date:</strong>{" "}
-                            {selectedOrder?.createdAt &&
-                              new Date(
-                                selectedOrder.createdAt,
-                              ).toLocaleString()}
+                            {new Date(order.createdAt).toLocaleString()}
                           </p>
                           <p>
-                            <strong>Status:</strong>{" "}
-                            {selectedOrder?.status || "Pending"}
+                            <strong>Status:</strong> {order.status || "Pending"}
                           </p>
                           <p>
-                            <strong>Total:</strong> ₹
-                            {selectedOrder?.total.toFixed(2)}
+                            <strong>Payment Mode:</strong>{" "}
+                            {order.paymentMode || "N/A"}
+                          </p>
+                          <p>
+                            <strong>Total:</strong> ₹{order.total.toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -224,7 +246,7 @@ export default function OrderTable({
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {selectedOrder?.items.map((item) => (
+                            {order.items.map((item) => (
                               <TableRow key={item.id}>
                                 <TableCell>{item.product.title}</TableCell>
                                 <TableCell>

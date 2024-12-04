@@ -14,8 +14,13 @@ export async function getOrders() {
             },
           },
         },
+        address: true, // Include the address relation
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
+
     return orders.map((order) => ({
       ...order,
       total: order.items.reduce(
