@@ -39,10 +39,10 @@ export function OrderCard({ order, onClick }: OrderCardProps) {
       onClick={onClick}
     >
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-end justify-between">
           <div>
-            <CardTitle className="text-base">
-              Order #{order.id.slice(-6)}
+            <CardTitle className="text-sm uppercase text-muted-foreground">
+              Order #{order.id}
             </CardTitle>
             <CardDescription>{formatDate(order.createdAt)}</CardDescription>
           </div>
