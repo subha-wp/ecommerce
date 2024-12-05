@@ -27,7 +27,7 @@ export default async function Home() {
   const categories = await getCategories();
 
   return (
-    <main className="container mx-auto max-w-7xl space-y-8 p-4">
+    <main className="container mx-auto max-w-7xl space-y-8 p-1">
       {/* Hero Carousel */}
       <section className="relative">
         <Carousel
@@ -57,43 +57,40 @@ export default async function Home() {
 
       {/* Categories Section */}
       <section>
-        <h2 className="text-2xl font-bold">Categories</h2>
+        <h2 className="text-lg font-bold">Categories</h2>
         <Suspense fallback={<Spinner />}>
-          <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex space-x-4">
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/products?category=${encodeURIComponent(category.name)}&categoryId=${encodeURIComponent(category.id)}`}
-                  className="inline-block"
-                >
-                  <div className="group w-[100px] space-y-3">
-                    <div className="relative aspect-square overflow-hidden rounded-full border">
-                      {category.image ? (
-                        <Image
-                          src={category.image}
-                          alt={category.name}
-                          fill
-                          className="object-contain transition-transform duration-300 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center bg-gray-100">
-                          <span className="text-gray-400">No image</span>
-                        </div>
-                      )}
-                    </div>
+          <div className="grid grid-cols-3 gap-2">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${encodeURIComponent(category.name)}&categoryId=${encodeURIComponent(category.id)}`}
+                className="inline-block"
+              >
+                <div className="group space-y-3">
+                  <div className="relative aspect-square overflow-hidden">
+                    {category.image ? (
+                      <Image
+                        src={category.image}
+                        alt={category.name}
+                        fill
+                        className="object-contain transition-transform duration-300 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-gray-100">
+                        <span className="text-gray-400">No image</span>
+                      </div>
+                    )}
                   </div>
-                </Link>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+                </div>
+              </Link>
+            ))}
+          </div>
         </Suspense>
       </section>
 
       {/* All Products Section */}
       <section>
-        <h2 className="mb-6 text-2xl font-bold">All Products</h2>
+        <h2 className="mb-2 text-lg font-bold">All Products</h2>
         <Suspense fallback={<Spinner />}>
           <ProductGrid />
         </Suspense>

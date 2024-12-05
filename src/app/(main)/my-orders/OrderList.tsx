@@ -40,7 +40,7 @@ export function OrderList({ orders }: OrderListProps) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-2">
       {orders.map((order) => (
         <OrderCard
           key={order.id}

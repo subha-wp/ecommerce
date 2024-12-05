@@ -34,7 +34,7 @@ export function SubcategoryList({
 
   return (
     <ScrollArea className="w-full">
-      <div className="flex space-x-4 p-1">
+      <div className="flex space-x-2">
         {subcategories.map((subcategory) => (
           <Link
             key={subcategory.id}

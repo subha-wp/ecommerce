@@ -28,8 +28,8 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-4xl space-y-8 p-4">
-      <div className="flex flex-col gap-2">
+    <div className="container mx-auto max-w-7xl space-y-8 p-1">
+      <div className="">
         <h1 className="text-2xl font-bold md:text-3xl">My Orders</h1>
         <p className="text-sm text-muted-foreground">
           View and track all your orders

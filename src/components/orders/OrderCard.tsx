@@ -35,16 +35,18 @@ export function OrderCard({ order, onClick }: OrderCardProps) {
 
   return (
     <Card
-      className="cursor-pointer transition-all hover:shadow-md"
+      className="max-w-full cursor-pointer transition-all hover:shadow-md"
       onClick={onClick}
     >
       <CardHeader className="pb-2">
         <div className="flex items-end justify-between">
           <div>
-            <CardTitle className="text-xs uppercase text-muted-foreground">
+            <CardTitle className="text-[10px] uppercase text-muted-foreground">
               Order #{order.id}
             </CardTitle>
-            <CardDescription>{formatDate(order.createdAt)}</CardDescription>
+            <CardDescription className="text-[10px]">
+              {formatDate(order.createdAt)}
+            </CardDescription>
           </div>
           <Badge
             variant={order.status === "DELIVERED" ? "default" : "secondary"}

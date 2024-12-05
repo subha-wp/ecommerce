@@ -9,7 +9,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="pb-safe fixed bottom-0 left-0 right-0 z-50 block border-t bg-white md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 block border-t bg-white pb-safe md:hidden">
       <div className="mx-auto flex h-16 max-w-md items-center justify-around px-6">
         <Link
           href="/"
@@ -31,7 +31,7 @@ export default function BottomNav() {
           )}
         >
           <PackageSearch className="h-5 w-5" />
-          <span className="text-[10px]">Categories</span>
+          <span className="ml-1 text-[10px]"> Categories</span>
         </Link>
 
         <Link href="/products" className="relative flex flex-col items-center">
@@ -51,7 +51,7 @@ export default function BottomNav() {
           )}
         >
           <Package className="h-5 w-5" />
-          <span className="text-[10px]">Orders</span>
+          <span className="text-[10px]">My Orders</span>
         </Link>
 
         <Link

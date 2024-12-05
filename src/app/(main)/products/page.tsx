@@ -18,7 +18,7 @@ export default async function ProductsPage({
   const subcategories = await getSubcategoriesByCategoryId(categoryId);
 
   return (
-    <div className="container mx-auto max-w-7xl space-x-2 p-4">
+    <div className="container mx-auto max-w-7xl p-1">
       {subcategories && (
         <div className="mb-6">
           <SubcategoryList
