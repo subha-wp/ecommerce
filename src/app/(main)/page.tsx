@@ -7,9 +7,9 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/Spinner";
 import { ProductGrid } from "@/components/ProductGrid";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Carousel images
 const carouselImages = [
@@ -56,18 +56,18 @@ export default async function Home() {
       </section>
 
       {/* Categories Section */}
-      <section>
-        <h2 className="text-lg font-bold">Categories</h2>
+      <section className="rounded-lg bg-gradient-to-br from-green-400 to-green-600 p-2 shadow-lg">
+        <h2 className="mb-4 text-lg font-bold text-white">Categories</h2>
         <Suspense fallback={<Spinner />}>
-          <div className="grid grid-cols-3 gap-2">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/products?category=${encodeURIComponent(category.name)}&categoryId=${encodeURIComponent(category.id)}`}
-                className="inline-block"
-              >
-                <div className="group space-y-3">
-                  <div className="relative aspect-square overflow-hidden">
+          <ScrollArea className="w-full">
+            <div className="grid grid-cols-3 gap-4 pb-4">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${encodeURIComponent(category.name)}&categoryId=${encodeURIComponent(category.id)}`}
+                  className="flex flex-col items-center space-y-2"
+                >
+                  <div className="group relative aspect-square h-36 w-36 overflow-hidden transition-all duration-300 hover:shadow-md">
                     {category.image ? (
                       <Image
                         src={category.image}
@@ -77,14 +77,14 @@ export default async function Home() {
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-gray-100">
-                        <span className="text-gray-400">No image</span>
+                        <span className="text-sm text-gray-400">No image</span>
                       </div>
                     )}
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          </ScrollArea>
         </Suspense>
       </section>
 

@@ -10,7 +10,7 @@ export default function BottomNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 block border-t bg-white pb-safe md:hidden">
-      <div className="mx-auto flex h-16 max-w-md items-center justify-around px-6">
+      <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
         <Link
           href="/"
           className={cn(
