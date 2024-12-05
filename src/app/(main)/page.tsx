@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/Spinner";
+import { ProductGrid } from "@/components/ProductGrid";
 
 // Carousel images
 const carouselImages = [
@@ -39,7 +40,7 @@ export default async function Home() {
           <CarouselContent>
             {carouselImages.map((image, index) => (
               <CarouselItem key={index}>
-                <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
+                <div className="relative aspect-[30/9] w-full overflow-hidden rounded-lg">
                   <Image
                     src={image.src}
                     alt={image.alt}
@@ -87,6 +88,14 @@ export default async function Home() {
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
+        </Suspense>
+      </section>
+
+      {/* All Products Section */}
+      <section>
+        <h2 className="mb-6 text-2xl font-bold">All Products</h2>
+        <Suspense fallback={<Spinner />}>
+          <ProductGrid />
         </Suspense>
       </section>
     </main>
