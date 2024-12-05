@@ -52,52 +52,52 @@ export function UserProfile({ user }: UserProfileProps) {
   };
 
   return (
-    <div className="mb-8 rounded-lg border bg-white p-6">
-      <h2 className="mb-4 text-2xl font-semibold">Profile Information</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="displayName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <Input
-              id="displayName"
-              {...register("displayName", {
-                required: "Display Name is required",
-              })}
-              disabled={!isEditing}
-            />
-            {errors.displayName && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.displayName.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              {...register("email", { required: "Email is required" })}
-              disabled={!isEditing}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+    <div className="rounded-lg border bg-white p-4 md:p-6">
+      <h2 className="mb-4 text-xl font-semibold md:text-2xl">
+        Profile Information
+      </h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label
+            htmlFor="displayName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Name
+          </label>
+          <Input
+            id="displayName"
+            {...register("displayName", {
+              required: "Display Name is required",
+            })}
+            disabled={!isEditing}
+            className="mt-1"
+          />
+          {errors.displayName && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.displayName.message}
+            </p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <Input
+            id="email"
+            type="email"
+            {...register("email", { required: "Email is required" })}
+            disabled={!isEditing}
+            className="mt-1"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
         </div>
         {isEditing ? (
-          <div className="mt-4 space-x-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Button type="submit">Save Changes</Button>
             <Button
               type="button"
@@ -108,14 +108,9 @@ export function UserProfile({ user }: UserProfileProps) {
             </Button>
           </div>
         ) : (
-          // <Button
-          //   type="button"
-          //   onClick={() => setIsEditing(true)}
-          //   className="mt-4"
-          // >
-          //   Edit Profile
-          // </Button>
-          <></>
+          <Button type="button" onClick={() => setIsEditing(true)}>
+            Edit Profile
+          </Button>
         )}
       </form>
     </div>

@@ -127,6 +127,9 @@ const config: Config = {
       animation: {
         "scroll-right": "scroll-right 20s linear infinite",
       },
+      padding: {
+        safe: "env(safe-area-inset-bottom)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

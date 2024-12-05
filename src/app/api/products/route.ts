@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const categoryId = searchParams.get("categoryId");
     const subcategoryId = searchParams.get("subcategoryId");
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = 8;
+    const limit = 4;
     const skip = (page - 1) * limit;
 
     // Build where clause based on filters
