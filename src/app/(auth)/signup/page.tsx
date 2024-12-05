@@ -1,4 +1,3 @@
-// import signupImage from "@/assets/signup-image2.png";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,24 +9,28 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="flex h-screen items-center justify-center p-5">
-      <div className="flex h-full max-h-[36rem] w-fit overflow-hidden rounded-2xl bg-card shadow-2xl">
-        <div className="w-full space-y-10 overflow-y-auto p-10 md:min-w-[420px]">
-          <div className="space-y-1 text-center">
-            <h1 className="text-2xl font-bold">Sign up to ZapTray</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 p-4">
+      <div className="flex w-full max-w-4xl overflow-hidden rounded-2xl bg-card shadow-2xl">
+        <div className="w-full space-y-8 p-8 md:w-1/2">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-muted-foreground">
+              Enter your details to get started with ZapTray
+            </p>
           </div>
-          <div className="space-y-5">
-            <SignUpForm />
-            <Link href="/login" className="block text-center hover:underline">
-              Already have an account? Log in
+          <SignUpForm />
+          <div className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
+              Log in
             </Link>
           </div>
         </div>
-        {/* <Image
-          src={signupImage}
-          alt=""
-          className="hidden w-1/2 object-cover md:block"
-        /> */}
       </div>
     </main>
   );

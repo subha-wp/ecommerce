@@ -5,12 +5,9 @@ import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
 import { Spinner } from "@/components/Spinner";
+import { Badge } from "@/components/ui/badge";
 
 const ProductDetails = dynamic(() => import("./ProductDetails"), {
-  loading: () => <Spinner />,
-});
-
-const ProductImageGallery = dynamic(() => import("./ProductImageGallery"), {
   loading: () => <Spinner />,
 });
 
@@ -36,37 +33,12 @@ export default async function ProductPage({
   const userId = user?.id;
   const isFavorite = userId ? await getUserFavorites(userId, params.id) : false;
 
-  // Calculate discount percentage
-  const discountPercentage = Math.round(
-    ((product.price - product.minPrice) / product.price) * 100,
-  );
-
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="grid gap-8 md:grid-cols-2">
+    <div className="container mx-auto mb-10 max-w-7xl px-2 py-4 sm:py-8">
+      <div className="grid gap-6 sm:grid-cols-2">
         <Suspense fallback={<Spinner />}>
-          <ProductImageGallery images={product.images} />
+          <ProductDetails product={product} initialIsFavorite={isFavorite} />
         </Suspense>
-        <div>
-          <h1 className="mb-4 text-xl font-bold">{product.title}</h1>
-          <div className="flex items-center gap-2">
-            <p className="font-semibold text-gray-400 line-through">
-              ₹{product.price.toFixed(2)}
-            </p>
-            <p className="font-semibold">₹{product.minPrice.toFixed(2)}</p>
-            <p className="text-sm font-semibold text-green-500">
-              ({discountPercentage}% off)
-            </p>
-          </div>
-
-          <Suspense fallback={<Spinner />}>
-            <ProductDetails product={product} initialIsFavorite={isFavorite} />
-          </Suspense>
-          <div className="py-4">
-            <p className="font-bold">Description</p>
-            <p className="mb-4 text-gray-600">{product.description}</p>
-          </div>
-        </div>
       </div>
       <Suspense fallback={<Spinner />}>
         <RelevantProducts

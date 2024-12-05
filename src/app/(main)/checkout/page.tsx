@@ -16,11 +16,10 @@ export default async function CheckoutPage() {
   const addresses = await getUserAddresses(user.id);
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Checkout</h1>
+    <div className="container mx-auto max-w-7xl bg-gradient-to-br from-primary/10 to-secondary/10 px-4 py-8">
+      <h1 className="mb-4 text-center text-xl font-bold">Checkout</h1>
       <div className="grid gap-8 md:grid-cols-2">
         <div>
-          <h2 className="mb-4 text-xl font-semibold">Shipping Information</h2>
           <Suspense fallback={<div>Loading...</div>}>
             <CheckoutForm user={user} addresses={addresses} />
           </Suspense>

@@ -2,15 +2,24 @@
 
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, Truck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-// Function to get tomorrow's date
 const getTomorrowDate = () => {
   const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 4);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   return tomorrow.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -33,92 +42,109 @@ export default function Cart({ user }: { user: any }) {
   };
 
   return (
-    <div className="pb-24 md:pb-0">
-      <h1 className="mb-6 text-2xl font-bold">Your Cart</h1>
-      {cart.length === 0 ? (
-        <div className="flex flex-col items-center justify-center space-y-4 py-12">
-          <ShoppingCart />
-          <p className="text-lg font-medium text-gray-600">
-            Your cart is empty.
-          </p>
-          <Link href="/">
-            <Button>Continue Shopping</Button>
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="space-y-4">
-            {cart.map((item: any) => (
-              <div
-                key={item.id}
-                className="flex items-center space-x-4 rounded-lg border p-4 shadow-sm"
-              >
-                <Image
-                  src={item.images[0]?.url || "/placeholder.png"}
-                  alt={item.title}
-                  width={80}
-                  height={80}
-                  className="rounded-md object-cover"
-                />
-                <div className="flex-1">
-                  <Link href={`/products/${item.id}`}>
-                    <h3 className="font-medium">
-                      {item.title.substring(0, 40)}...
-                    </h3>
-                  </Link>
-                  <p className="text-sm text-gray-500">
-                    ₹{item.minPrice.toFixed(2)}
-                  </p>
-                  <div className="mt-2 flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      disabled={item.quantity === 1}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <span className="w-8 text-center">{item.quantity}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
+    <div className="">
+      <CardHeader>
+        <CardTitle className="text-center text-xl font-bold">
+          Your Cart
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-2">
+        {cart.length === 0 ? (
+          <div className="flex flex-col items-center justify-center space-y-4 py-12">
+            <ShoppingCart className="text-primary" size={48} />
+            <p className="text-lg font-medium text-muted-foreground">
+              Your cart is empty.
+            </p>
+            <Link href="/">
+              <Button>Continue Shopping</Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="w-full">
+              {cart.map((item: any) => (
+                <div key={item.id}>
+                  <div className="mb-4 flex space-x-4 rounded-lg border bg-gradient-to-r from-green-50 to-green-100 p-2">
+                    <div className="relative h-16 w-16 overflow-hidden rounded-md">
+                      <Image
+                        src={item.images[0]?.url || "/placeholder.png"}
+                        alt={item.title}
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </div>
+                    <div className="">
+                      <Link href={`/products/${item.id}`}>
+                        <h3 className="font-medium hover:underline">
+                          {item.title.substring(0, 40)}...
+                        </h3>
+                      </Link>
+                      <p className="text-sm text-muted-foreground">
+                        ₹{item.minPrice.toFixed(2)}
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity - 1)
+                          }
+                          disabled={item.quantity === 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="w-8 text-center">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity + 1)
+                          }
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <Badge>
+                        {" "}
+                        ₹{(item.minPrice * item.quantity).toFixed(2)}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
                   </div>
+                  <Separator className="my-4" />
                 </div>
-                <div className="flex flex-col items-end space-y-2">
-                  <p className="font-medium">
-                    ₹{(item.minPrice * item.quantity).toFixed(2)}
-                  </p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Button>
-                </div>
+              ))}
+            </div>
+            <div className="mt-8 space-y-4">
+              <div className="flex justify-between">
+                <span className="font-medium">Subtotal:</span>
+                <span className="font-bold">₹{getCartTotal().toFixed(2)}</span>
               </div>
-            ))}
-          </div>
-          <div className="mt-8 space-y-4 rounded-lg border bg-gray-50 p-4">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span className="font-medium">₹{getCartTotal().toFixed(2)}</span>
+              <div className="flex items-center justify-between text-primary">
+                <span className="flex items-center">
+                  <Truck className="mr-2 h-4 w-4" />
+                  Expected Delivery:
+                </span>
+                <span>{expectedDeliveryDate}</span>
+              </div>
             </div>
-            <div className="flex justify-between text-green-600">
-              <span>Expected Delivery:</span>
-              <span>{expectedDeliveryDate}</span>
-            </div>
-          </div>
-          <div className="mt-2">
-            <Button className="w-full" size="lg" onClick={handleCheckout}>
-              Proceed to Checkout (₹{getCartTotal().toFixed(2)})
-            </Button>
-          </div>
-        </>
+          </>
+        )}
+      </CardContent>
+      {cart.length > 0 && (
+        <CardFooter>
+          <Button className="w-full" size="lg" onClick={handleCheckout}>
+            Proceed to Checkout (₹{getCartTotal().toFixed(2)})
+          </Button>
+        </CardFooter>
       )}
     </div>
   );

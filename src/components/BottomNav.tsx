@@ -9,8 +9,8 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 block border-t bg-white pb-safe md:hidden">
-      <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 block border-t bg-gradient-to-t from-green-50 to-white pb-safe md:hidden">
+      <div className="mx-auto flex h-16 max-w-md items-center justify-around bg-transparent px-4">
         <Link
           href="/"
           className={cn(
@@ -35,10 +35,10 @@ export default function BottomNav() {
         </Link>
 
         <Link href="/products" className="relative flex flex-col items-center">
-          <div className="absolute -top-8 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110">
-            <Compass className="h-6 w-6" />
+          <div className="absolute -top-8 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110">
+            <Compass className="h-8 w-8" />
           </div>
-          <span className="mt-6 text-[10px]">Explore</span>
+          <span className="mt-6 text-[13px]">Explore</span>
         </Link>
 
         <Link

@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingButton from "@/components/LoadingButton";
+import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/PasswordInput";
 import {
   Form,
@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { login } from "./actions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -40,8 +42,13 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {error && <p className="text-center text-destructive">{error}</p>}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="usernameOrEmail"
@@ -49,7 +56,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Username or Email</FormLabel>
               <FormControl>
-                <Input placeholder="Username or Email" {...field} />
+                <Input placeholder="Enter your username or email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -62,15 +69,22 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} />
+                <PasswordInput placeholder="Enter your password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <LoadingButton loading={isPending} type="submit" className="w-full">
-          Log in
-        </LoadingButton>
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            "Log in"
+          )}
+        </Button>
       </form>
     </Form>
   );

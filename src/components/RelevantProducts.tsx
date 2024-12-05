@@ -39,11 +39,9 @@ export default function RelevantProducts({
 
   if (relevantProducts.length === 0) return null;
 
-  console.log("relevant product", relevantProducts);
-
   return (
-    <div className="mt-12">
-      <h2 className="mb-4 text-2xl font-bold">You might also like</h2>
+    <div className="mt-4">
+      <h2 className="mb-4 font-bold">You might also like</h2>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
         {relevantProducts.map((product) => (
           <Link
