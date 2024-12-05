@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Logout from "./Logout";
 import { UserProfile } from "./UserProfile";
 import { AddressList } from "./AddressList";
-import { OrderHistory } from "./OrderHistory";
+import { OrderHistory } from "@/components/OrderHistory";
 
 export default async function UserAccountPage() {
   const { user } = await validateRequest();
@@ -26,9 +26,6 @@ export default async function UserAccountPage() {
         <div className="space-y-8 lg:col-span-2">
           <UserProfile user={user} />
           <AddressList userId={user.id} />
-        </div>
-        <div>
-          <OrderHistory userId={user.id} />
         </div>
       </div>
 

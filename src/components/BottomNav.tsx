@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Compass, User } from "lucide-react";
+import { Home, Compass, User, Package, PackageSearch } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -19,14 +19,39 @@ export default function BottomNav() {
           )}
         >
           <Home className="h-5 w-5" />
-          <span className="text-xs">Home</span>
+          <span className="text-[10px]">Home</span>
+        </Link>
+        <Link
+          href="/categories"
+          className={cn(
+            "flex flex-col items-center gap-1",
+            pathname === "/categories"
+              ? "text-primary"
+              : "text-muted-foreground",
+          )}
+        >
+          <PackageSearch className="h-5 w-5" />
+          <span className="text-[10px]">Categories</span>
         </Link>
 
         <Link href="/products" className="relative flex flex-col items-center">
           <div className="absolute -top-8 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110">
             <Compass className="h-6 w-6" />
           </div>
-          <span className="mt-6 text-xs">Explore</span>
+          <span className="mt-6 text-[10px]">Explore</span>
+        </Link>
+
+        <Link
+          href="/my-orders"
+          className={cn(
+            "flex flex-col items-center gap-1",
+            pathname === "/my-orders"
+              ? "text-primary"
+              : "text-muted-foreground",
+          )}
+        >
+          <Package className="h-5 w-5" />
+          <span className="text-[10px]">Orders</span>
         </Link>
 
         <Link
@@ -39,7 +64,7 @@ export default function BottomNav() {
           )}
         >
           <User className="h-5 w-5" />
-          <span className="text-xs">Profile</span>
+          <span className="text-[10px]">Profile</span>
         </Link>
       </div>
     </div>
