@@ -41,13 +41,14 @@ export function OrderCard({ order, onClick }: OrderCardProps) {
       <CardHeader className="pb-2">
         <div className="flex items-end justify-between">
           <div>
-            <CardTitle className="text-sm uppercase text-muted-foreground">
+            <CardTitle className="text-xs uppercase text-muted-foreground">
               Order #{order.id}
             </CardTitle>
             <CardDescription>{formatDate(order.createdAt)}</CardDescription>
           </div>
           <Badge
             variant={order.status === "DELIVERED" ? "default" : "secondary"}
+            className="text-[10px]"
           >
             {order.status}
           </Badge>

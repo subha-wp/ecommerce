@@ -113,7 +113,7 @@ export default function Cart({ user }: { user: any }) {
               <span>{expectedDeliveryDate}</span>
             </div>
           </div>
-          <div className="fixed bottom-0 left-0 right-0 z-10 bg-white p-4 shadow-md md:relative md:mt-8 md:bg-transparent md:p-0 md:shadow-none">
+          <div className="mt-2">
             <Button className="w-full" size="lg" onClick={handleCheckout}>
               Proceed to Checkout (₹{getCartTotal().toFixed(2)})
             </Button>

@@ -16,7 +16,10 @@ export default async function UserAccountPage() {
   return (
     <main className="container mx-auto max-w-7xl space-y-8 p-4">
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-semibold md:text-3xl">Account</h1>
+        <div className="flex justify-between">
+          <h1 className="text-2xl font-semibold md:text-3xl">Account</h1>
+          <Logout />
+        </div>
         <p className="text-sm text-gray-500">
           Manage your account settings and view your orders
         </p>
@@ -27,10 +30,6 @@ export default async function UserAccountPage() {
           <UserProfile user={user} />
           <AddressList userId={user.id} />
         </div>
-      </div>
-
-      <div className="mt-8">
-        <Logout />
       </div>
     </main>
   );

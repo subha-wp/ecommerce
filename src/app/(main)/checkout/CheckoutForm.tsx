@@ -26,6 +26,20 @@ import { Loader2 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
 import { trackFacebookEvent } from "@/components/FacebookPixel";
 
+const fixedButtonStyle = `
+  @media (max-width: 768px) {
+    .fixed-bottom-button {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background-color: white;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+`;
+
 type Address = {
   id: string;
   name: string;
@@ -48,7 +62,7 @@ export default function CheckoutForm({
   const { cart, clearCart } = useCart();
   const { toast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState("");
-  const [paymentMode, setPaymentMode] = useState("ONLINE");
+  const [paymentMode, setPaymentMode] = useState("COD");
   const [totalAmount, setTotalAmount] = useState(() =>
     cart.reduce((acc, item) => acc + item.minPrice * item.quantity, 0),
   );
@@ -201,8 +215,11 @@ export default function CheckoutForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 pb-24 md:pb-0">
-      <Card className="shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-md space-y-6 pb-24 md:pb-0"
+    >
+      <Card className="w-full shadow-md">
         <CardHeader>
           <CardTitle className="text-lg md:text-xl">Delivery Address</CardTitle>
           <CardDescription>
@@ -217,11 +234,14 @@ export default function CheckoutForm({
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an address" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="w-full min-w-[250px]">
               {addresses.map((address) => (
                 <SelectItem key={address.id} value={address.id}>
-                  {address.name}, {address.addressLine1}, {address.city},{" "}
-                  {address.state}, {address.zipCode}
+                  <div className="flex flex-col">
+                    <span className="text-sm text-muted-foreground">
+                      {address.addressLine1},{address.zipCode}
+                    </span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -229,7 +249,7 @@ export default function CheckoutForm({
         </CardContent>
       </Card>
 
-      <Card className="shadow-md">
+      <Card className="w-full shadow-md">
         <CardHeader>
           <CardTitle className="text-lg md:text-xl">Payment Method</CardTitle>
           <CardDescription>Choose how you want to pay</CardDescription>
@@ -238,9 +258,9 @@ export default function CheckoutForm({
           <RadioGroup
             value={paymentMode}
             onValueChange={setPaymentMode}
-            className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0"
+            className="flex flex-col space-y-4"
           >
-            <div className="flex flex-1 cursor-pointer items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
+            {/* <div className="flex flex-1 cursor-pointer items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
               <RadioGroupItem value="ONLINE" id="online" />
               <Label htmlFor="online" className="flex-1 cursor-pointer">
                 <div className="font-semibold">Online Payment</div>
@@ -248,7 +268,7 @@ export default function CheckoutForm({
                   Pay securely with UPI, Card, or Net Banking
                 </div>
               </Label>
-            </div>
+            </div> */}
             <div className="flex flex-1 cursor-pointer items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
               <RadioGroupItem value="COD" id="cod" />
               <Label htmlFor="cod" className="flex-1 cursor-pointer">
@@ -262,7 +282,7 @@ export default function CheckoutForm({
         </CardContent>
       </Card>
 
-      <Card className="shadow-md">
+      <Card className="w-full shadow-md">
         <CardHeader>
           <CardTitle className="text-lg md:text-xl">Order Summary</CardTitle>
         </CardHeader>
@@ -280,7 +300,8 @@ export default function CheckoutForm({
         </CardContent>
       </Card>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4 md:relative md:border-t-0 md:bg-transparent md:p-0">
+      <style>{fixedButtonStyle}</style>
+      <div className="mt-2">
         <Button type="submit" className="w-full" disabled={isProcessing}>
           {isProcessing ? (
             <>

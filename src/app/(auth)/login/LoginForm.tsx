@@ -25,7 +25,7 @@ export default function LoginForm() {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      usernameOrEmail: "",
       password: "",
     },
   });
@@ -44,12 +44,12 @@ export default function LoginForm() {
         {error && <p className="text-center text-destructive">{error}</p>}
         <FormField
           control={form.control}
-          name="username"
+          name="usernameOrEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Username or Email</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Username or Email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
