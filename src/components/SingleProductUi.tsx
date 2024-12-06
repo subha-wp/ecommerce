@@ -18,7 +18,7 @@ export default function SingleProductUi({ product }: any) {
 
   return (
     <>
-      <div className="min-w-[170px] max-w-[250px] rounded-lg border p-1">
+      <div className="min-w-[170px] max-w-[250px] rounded-lg border border-primary p-1">
         <div className="relative">
           <Link href={`/products/${product.id}`}>
             <Image
@@ -39,13 +39,15 @@ export default function SingleProductUi({ product }: any) {
             </Badge>
           )}
         </div>
-        <h2 className="mb-2 line-clamp-2">{product.title}</h2>
-        <div className="my-1 flex items-center justify-between rounded-md border p-1">
+        <h2 className="mb-2 line-clamp-2 text-xs font-semibold">
+          {product.title}
+        </h2>
+        <div className="my-1 flex items-center justify-between rounded-md border border-primary p-1">
           <div className="flex items-center gap-2">
-            <p className="font-semibold text-gray-400 line-through">
+            <p className="font-semibold text-muted-foreground line-through">
               ₹{product.price}
             </p>
-            <p className="font-semibold">₹{product.minPrice}</p>
+            <p className="font-semibold text-primary">₹{product.minPrice}</p>
           </div>
 
           <Suspense fallback={<Button disabled>Loading...</Button>}>
