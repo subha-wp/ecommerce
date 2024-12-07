@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "10", 4);
     const categoryId = searchParams.get("categoryId") || undefined;
     const subcategoryId = searchParams.get("subcategoryId") || undefined;
 

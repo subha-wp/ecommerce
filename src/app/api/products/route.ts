@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const categoryId = searchParams.get("categoryId");
     const subcategoryId = searchParams.get("subcategoryId");
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "10", 4);
     const search = searchParams.get("search");
     const skip = (page - 1) * pageSize;
 

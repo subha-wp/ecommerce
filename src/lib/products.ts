@@ -4,7 +4,7 @@ import prisma from "./prisma";
 // Public products API - Used for main product listing
 export async function getPublicProducts(
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 4,
   categoryId?: string,
   subcategoryId?: string,
 ) {
