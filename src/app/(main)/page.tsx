@@ -15,11 +15,11 @@ import FeaturedProducts from "@/components/FeaturedProducts";
 // Carousel images
 const carouselImages = [
   {
-    src: "https://gist.github.com/user-attachments/assets/3aa8d974-af11-41fd-8abe-adcb6e2f8ceb",
+    src: "https://gist.github.com/user-attachments/assets/9af90da7-f629-4a99-ae5e-42a51945eb68",
     alt: "Promotional Banner 1",
   },
   {
-    src: "https://gist.github.com/user-attachments/assets/7bde22de-5da4-46ca-87d3-2a5a8f35daca",
+    src: "https://gist.github.com/user-attachments/assets/79a9cf28-530e-4a6d-b233-40e5440ee197",
     alt: "Promotional Banner 2",
   },
 ];
