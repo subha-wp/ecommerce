@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,12 @@ export default function AdminProductsPage() {
         ...(searchQuery && { search: searchQuery }),
       });
 
-      const response = await fetch(`/api/products?${queryParams}`);
-      const data = await response.json();
+      const response = await fetch(`/api/admin/products?${queryParams}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
 
+      const data = await response.json();
       setProducts(data.products);
       setTotalProducts(data.totalProducts);
     } catch (error) {

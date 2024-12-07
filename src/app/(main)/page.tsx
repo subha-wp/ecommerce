@@ -10,6 +10,7 @@ import {
 import { Spinner } from "@/components/Spinner";
 import { ProductGrid } from "@/components/ProductGrid";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
 // Carousel images
 const carouselImages = [
@@ -83,6 +84,11 @@ export default async function Home() {
               </Link>
             ))}
           </div>
+        </Suspense>
+      </section>
+      <section className="">
+        <Suspense fallback={<Spinner />}>
+          <FeaturedProducts />
         </Suspense>
       </section>
 

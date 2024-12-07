@@ -11,13 +11,13 @@ type Product = {
 };
 
 export default async function FeaturedProducts() {
-  const products = await getFeaturedProducts(10); // Increased to 10 for better scrolling demonstration
+  const products = await getFeaturedProducts(5); // Increased to 10 for better scrolling demonstration
 
   return (
     <section className="mt-4">
       <div className="container mx-auto">
         <h2 className="mb-2 text-xl font-bold">Featured </h2>
-        <ScrollArea className="w-full whitespace-nowrap">
+        <ScrollArea className="hide-scrollbar w-full whitespace-nowrap">
           <div className="flex space-x-4 pb-4">
             {products.map((product) => (
               <SingleProductUi key={product.id} product={product} />

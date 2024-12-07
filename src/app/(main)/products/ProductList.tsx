@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-//@ts-nocheck
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -15,6 +14,13 @@ type Product = {
   price: number;
   minPrice: number;
   images: { url: string }[];
+};
+
+type ProductResponse = {
+  products: Product[];
+  totalProducts: number;
+  currentPage: number;
+  totalPages: number;
 };
 
 export default function ProductList() {
@@ -41,12 +47,12 @@ export default function ProductList() {
         ...(subcategoryId && { subcategoryId }),
       });
 
-      const response = await fetch(`/api/products?${params}`);
+      const response = await fetch(`/api/public/products?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch products");
       }
 
-      const data = await response.json();
+      const data: ProductResponse = await response.json();
 
       if (data.products.length === 0) {
         setHasMore(false);

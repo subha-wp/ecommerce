@@ -1,20 +1,111 @@
 //@ts-nocheck
 import prisma from "./prisma";
 
-export async function getProducts() {
+// Public products API - Used for main product listing
+export async function getPublicProducts(
+  page: number = 1,
+  pageSize: number = 10,
+  categoryId?: string,
+  subcategoryId?: string,
+) {
   try {
-    const products = await prisma.product.findMany({
-      include: { images: true },
-      category: { select: { name: true } },
-      subcategory: { select: { name: true } },
-    });
-    return products;
+    const where = {
+      isVisible: true,
+      ...(categoryId && { categoryId }),
+      ...(subcategoryId && { subcategoryId }),
+    };
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          images: true,
+          category: {
+            select: { name: true, id: true },
+          },
+          subcategory: {
+            select: { name: true, id: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    return {
+      products,
+      totalProducts: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
+    };
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
+    console.error("Error fetching public products:", error);
+    return {
+      products: [],
+      totalProducts: 0,
+      currentPage: page,
+      totalPages: 0,
+    };
   }
 }
 
+// Admin products API - Used for admin dashboard
+export async function getAdminProducts(
+  page: number = 1,
+  pageSize: number = 10,
+  search?: string,
+) {
+  try {
+    const where = search
+      ? {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {};
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          images: {
+            select: { url: true },
+          },
+          category: {
+            select: { name: true, id: true },
+          },
+          subcategory: {
+            select: { name: true, id: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    return {
+      products,
+      totalProducts: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  } catch (error) {
+    console.error("Error fetching admin products:", error);
+    return {
+      products: [],
+      totalProducts: 0,
+      currentPage: page,
+      totalPages: 0,
+    };
+  }
+}
+
+// Keep other existing functions
 export async function getProductById(id: string) {
   try {
     const product = await prisma.product.findUnique({
@@ -29,113 +120,6 @@ export async function getProductById(id: string) {
   } catch (error) {
     console.error("Error fetching product:", error);
     return null;
-  }
-}
-
-export async function getProductsByCategory(
-  category: string,
-  limit: number = 10,
-) {
-  try {
-    const products = await prisma.product.findMany({
-      where: { category },
-      take: limit,
-      include: {
-        images: true,
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
-      },
-
-      orderBy: { createdAt: "desc" },
-    });
-    return products;
-  } catch (error) {
-    console.error("Error fetching products by category:", error);
-    return [];
-  }
-}
-
-export async function getSubcategoriesByCategory(category: string) {
-  try {
-    const subcategories = await prisma.product.findMany({
-      where: { category },
-      select: { subcategory: true },
-
-      distinct: ["subcategory"],
-    });
-    return subcategories
-      .map((sc) => sc.subcategory)
-      .filter(Boolean) as string[];
-  } catch (error) {
-    console.error("Error fetching subcategories:", error);
-    return [];
-  }
-}
-
-// implement
-
-export async function getProductsByCategoryAndSubcategory(
-  category: string,
-  subcategory: string | null,
-  limit: number,
-) {
-  try {
-    const products = await prisma.product.findMany({
-      where: {
-        category,
-        ...(subcategory && { subcategory }),
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        images: {
-          select: { url: true },
-          take: 1,
-        },
-        category: { select: { name: true } },
-        subcategory: { select: { name: true } },
-      },
-      take: limit,
-    });
-
-    return products;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
-  }
-}
-
-// implement
-
-export async function getAdminProducts(
-  page: number = 1,
-  pageSize: number = 10,
-) {
-  const skip = (page - 1) * pageSize;
-
-  try {
-    const [products, totalProducts] = await Promise.all([
-      prisma.product.findMany({
-        skip,
-        take: pageSize,
-        include: {
-          images: {
-            select: { url: true },
-            take: 1,
-          },
-          category: { select: { name: true } },
-          subcategory: { select: { name: true } },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      prisma.product.count(),
-    ]);
-
-    return { products, totalProducts };
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return { products: [], totalProducts: 0 };
   }
 }
 
