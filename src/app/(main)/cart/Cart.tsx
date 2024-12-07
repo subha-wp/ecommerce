@@ -17,6 +17,8 @@ import Image from "next/image";
 import { Minus, Plus, ShoppingCart, Trash2, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+const DELIVERY_CHARGE = 15;
+
 const getTomorrowDate = () => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -32,6 +34,8 @@ export default function Cart({ user }: { user: any }) {
     useCart();
   const router = useRouter();
   const expectedDeliveryDate = getTomorrowDate();
+  const subtotal = getCartTotal();
+  const total = subtotal + DELIVERY_CHARGE;
 
   const handleCheckout = () => {
     if (!user) {
@@ -107,7 +111,6 @@ export default function Cart({ user }: { user: any }) {
                     </div>
                     <div className="flex flex-col items-end space-y-2">
                       <Badge>
-                        {" "}
                         ₹{(item.minPrice * item.quantity).toFixed(2)}
                       </Badge>
                       <Button
@@ -126,7 +129,15 @@ export default function Cart({ user }: { user: any }) {
             <div className="mt-8 space-y-4">
               <div className="flex justify-between">
                 <span className="font-medium">Subtotal:</span>
-                <span className="font-bold">₹{getCartTotal().toFixed(2)}</span>
+                <span className="font-bold">₹{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Delivery Charge:</span>
+                <span className="font-bold">₹{DELIVERY_CHARGE.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Total:</span>
+                <span className="font-bold">₹{total.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between text-primary">
                 <span className="flex items-center">
@@ -142,7 +153,7 @@ export default function Cart({ user }: { user: any }) {
       {cart.length > 0 && (
         <CardFooter>
           <Button className="w-full" size="lg" onClick={handleCheckout}>
-            Proceed to Checkout (₹{getCartTotal().toFixed(2)})
+            Proceed to Checkout (₹{total.toFixed(2)})
           </Button>
         </CardFooter>
       )}

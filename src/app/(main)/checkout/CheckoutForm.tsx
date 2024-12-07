@@ -26,6 +26,8 @@ import { Loader2 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
 import { trackFacebookEvent } from "@/components/FacebookPixel";
 
+const DELIVERY_CHARGE = 15; // Fixed delivery charge
+
 const fixedButtonStyle = `
   @media (max-width: 768px) {
     .fixed-bottom-button {
@@ -63,11 +65,13 @@ export default function CheckoutForm({
   const { toast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMode, setPaymentMode] = useState("COD");
-  const [totalAmount, setTotalAmount] = useState(() =>
+  const [subtotal, setSubtotal] = useState(() =>
     cart.reduce((acc, item) => acc + item.minPrice * item.quantity, 0),
   );
   const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
+
+  const totalAmount = subtotal + DELIVERY_CHARGE;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +121,7 @@ export default function CheckoutForm({
             price: item.minPrice,
           })),
           totalAmount,
+          deliveryCharge: DELIVERY_CHARGE,
         }),
       });
 
@@ -124,7 +129,6 @@ export default function CheckoutForm({
         const error = await response.json();
         throw new Error(error.message || "Failed to initiate payment");
       }
-      console.log("payment res", response);
 
       const { paymentLink, sessionId } = await response.json();
 
@@ -132,7 +136,7 @@ export default function CheckoutForm({
         throw new Error("No payment link received");
       }
       const cashfree = await load({
-        mode: "production", // or "production"
+        mode: "production",
       });
       let checkoutOptions = {
         paymentSessionId: sessionId,
@@ -140,7 +144,6 @@ export default function CheckoutForm({
       };
       cashfree.checkout(checkoutOptions).then((res) => {
         console.log("payment initialized");
-        // Track Purchase event
         trackFacebookEvent("Purchase", {
           content_type: "product",
           contents: cart.map((item) => ({
@@ -177,6 +180,7 @@ export default function CheckoutForm({
           })),
           paymentMode,
           totalAmount,
+          deliveryCharge: DELIVERY_CHARGE,
         }),
       });
 
@@ -191,7 +195,6 @@ export default function CheckoutForm({
         description: `Your order ID is ${order.id}. Thank you for your purchase.`,
       });
 
-      // Track Purchase event
       trackFacebookEvent("Purchase", {
         content_type: "product",
         contents: cart.map((item) => ({
@@ -260,15 +263,6 @@ export default function CheckoutForm({
             onValueChange={setPaymentMode}
             className="flex flex-col space-y-4"
           >
-            {/* <div className="flex flex-1 cursor-pointer items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
-              <RadioGroupItem value="ONLINE" id="online" />
-              <Label htmlFor="online" className="flex-1 cursor-pointer">
-                <div className="font-semibold">Online Payment</div>
-                <div className="text-sm text-muted-foreground">
-                  Pay securely with UPI, Card, or Net Banking
-                </div>
-              </Label>
-            </div> */}
             <div className="flex flex-1 cursor-pointer items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
               <RadioGroupItem value="COD" id="cod" />
               <Label htmlFor="cod" className="flex-1 cursor-pointer">
@@ -290,7 +284,11 @@ export default function CheckoutForm({
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>₹{totalAmount.toFixed(2)}</span>
+              <span>₹{subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Delivery Charge</span>
+              <span>₹{DELIVERY_CHARGE.toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-semibold">
               <span>Total Amount</span>
