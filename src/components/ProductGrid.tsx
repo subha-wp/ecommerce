@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import SingleProductUi from "./SingleProductUi";
 import { Spinner } from "./Spinner";
+import ProductSkeleton from "./ProductSkeleton";
 
 type Product = {
   id: string;
@@ -73,8 +74,9 @@ export function ProductGrid() {
       </div>
 
       {loading && (
-        <div className="my-4 flex justify-center">
-          <Spinner />
+        <div className="my-4 flex justify-center space-x-2">
+          <ProductSkeleton />
+          <ProductSkeleton />
         </div>
       )}
 

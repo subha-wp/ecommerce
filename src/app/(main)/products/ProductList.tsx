@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { useSearchParams } from "next/navigation";
 import SingleProductUi from "@/components/SingleProductUi";
 import { Spinner } from "@/components/Spinner";
+import ProductSkeleton from "@/components/ProductSkeleton";
 
 type Product = {
   id: string;
@@ -93,8 +94,9 @@ export default function ProductList() {
       </div>
 
       {loading && (
-        <div className="my-4 flex justify-center">
-          <Spinner />
+        <div className="my-4 flex justify-center space-x-2">
+          <ProductSkeleton />
+          <ProductSkeleton />
         </div>
       )}
 
