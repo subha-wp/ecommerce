@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -22,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ProductSearch from "./ProductSearch";
 
 type Product = {
   id: string;
@@ -46,6 +46,9 @@ type ProductTableProps = {
   currentPage: number;
   pageSize: number;
   totalProducts: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: string) => void;
+  onSearch: (query: string) => void;
 };
 
 export default function ProductTable({
@@ -53,11 +56,13 @@ export default function ProductTable({
   currentPage,
   pageSize,
   totalProducts,
+  onPageChange,
+  onPageSizeChange,
+  onSearch,
 }: ProductTableProps) {
   const [products, setProducts] = useState(initialProducts);
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
-  const router = useRouter();
-
   const totalPages = Math.ceil(totalProducts / pageSize);
 
   const handleDelete = async (id: string) => {
@@ -80,8 +85,7 @@ export default function ProductTable({
         console.error("Error deleting product:", error);
         toast({
           title: "Error",
-          description:
-            "There was an error deleting the product. Please try again.",
+          description: "Failed to delete product. Please try again.",
           variant: "destructive",
         });
       }
@@ -114,61 +118,62 @@ export default function ProductTable({
 
       toast({
         title: "Product updated",
-        description: `Product has been ${
-          field === "isFeatured"
-            ? value
-              ? "featured"
-              : "unfeatured"
-            : value
-              ? "made visible"
-              : "hidden"
-        }.`,
+        description: `Product has been ${field === "isFeatured" ? (value ? "featured" : "unfeatured") : value ? "made visible" : "hidden"}.`,
       });
     } catch (error) {
       console.error(`Error updating product ${field}:`, error);
       toast({
         title: "Error",
-        description: `There was an error updating the product ${field}. Please try again.`,
+        description: `Failed to update product ${field}. Please try again.`,
         variant: "destructive",
       });
     }
   };
 
-  const handlePageChange = (newPage: number) => {
-    router.push(`/next-admin/products?page=${newPage}&pageSize=${pageSize}`);
-  };
-
-  const handlePageSizeChange = (newPageSize: string) => {
-    router.push(`/next-admin/products?page=1&pageSize=${newPageSize}`);
-  };
+  const handleSearchChange = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      onSearch(query);
+    },
+    [onSearch],
+  );
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <span className="mr-2">Items per page:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={handlePageSizeChange}
-          >
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 30, 40, 50].map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          Showing {(currentPage - 1) * pageSize + 1} -{" "}
-          {Math.min(currentPage * pageSize, totalProducts)} of {totalProducts}{" "}
-          products
+      <div className="mb-4 space-y-4">
+        <ProductSearch
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+        />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-muted-foreground">
+              Items per page:
+            </span>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={onPageSizeChange}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 30, 40, 50].map((size) => (
+                  <SelectItem key={size} value={size.toString()}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Showing {(currentPage - 1) * pageSize + 1} -{" "}
+            {Math.min(currentPage * pageSize, totalProducts)} of {totalProducts}{" "}
+            products
+          </div>
         </div>
       </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -236,18 +241,19 @@ export default function ProductTable({
           ))}
         </TableBody>
       </Table>
+
       <div className="mt-4 flex items-center justify-between">
         <Button
-          onClick={() => handlePageChange(currentPage - 1)}
+          onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
           Previous
         </Button>
-        <span>
+        <span className="text-sm text-muted-foreground">
           Page {currentPage} of {totalPages}
         </span>
         <Button
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
           Next

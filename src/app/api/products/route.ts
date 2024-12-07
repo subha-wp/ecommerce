@@ -7,8 +7,9 @@ export async function GET(request: NextRequest) {
     const categoryId = searchParams.get("categoryId");
     const subcategoryId = searchParams.get("subcategoryId");
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = 4;
-    const skip = (page - 1) * limit;
+    const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+    const search = searchParams.get("search");
+    const skip = (page - 1) * pageSize;
 
     // Build where clause based on filters
     const where: any = {};
@@ -18,11 +19,17 @@ export async function GET(request: NextRequest) {
     if (subcategoryId) {
       where.subcategoryId = subcategoryId;
     }
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
-        take: limit,
+        take: pageSize,
         skip,
         orderBy: { createdAt: "desc" },
         include: {
@@ -50,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       products,
-      totalPages: Math.ceil(total / limit),
+      totalProducts: total,
       currentPage: page,
       categories,
       subcategories,

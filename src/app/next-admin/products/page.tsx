@@ -1,20 +1,72 @@
-//@ts-nocheck
-import { Suspense } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { getAdminProducts } from "@/lib/products";
 import ProductTable from "./ProductTable";
 import { Spinner } from "@/components/Spinner";
 
-export default async function AdminProductsPage({
-  searchParams,
-}: {
-  searchParams: { page?: string; pageSize?: string };
-}) {
-  const page = Number(searchParams.page) || 1;
-  const pageSize = Number(searchParams.pageSize) || 10;
+export default function AdminProductsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
 
-  const { products, totalProducts } = await getAdminProducts(page, pageSize);
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const searchQuery = searchParams.get("search") || "";
+
+  useEffect(() => {
+    fetchProducts();
+  }, [page, pageSize, searchQuery]);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+        ...(searchQuery && { search: searchQuery }),
+      });
+
+      const response = await fetch(`/api/products?${queryParams}`);
+      const data = await response.json();
+
+      setProducts(data.products);
+      setTotalProducts(data.totalProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", newPage.toString());
+    router.push(`/next-admin/products?${params.toString()}`);
+  };
+
+  const handlePageSizeChange = (newPageSize: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", newPageSize);
+    params.set("page", "1");
+    router.push(`/next-admin/products?${params.toString()}`);
+  };
+
+  const handleSearch = (query: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set("search", query);
+    } else {
+      params.delete("search");
+    }
+    params.set("page", "1");
+    router.push(`/next-admin/products?${params.toString()}`);
+  };
 
   return (
     <div className="w-full">
@@ -30,14 +82,21 @@ export default async function AdminProductsPage({
         </Link>
       </div>
 
-      <Suspense fallback={<Spinner />}>
+      {loading ? (
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      ) : (
         <ProductTable
           products={products}
           currentPage={page}
           pageSize={pageSize}
           totalProducts={totalProducts}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onSearch={handleSearch}
         />
-      </Suspense>
+      )}
     </div>
   );
 }
