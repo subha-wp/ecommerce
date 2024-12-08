@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginValues } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
-import { PasswordInput } from "@/components/PasswordInput";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -10,34 +14,49 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { loginSchema, LoginValues } from "@/lib/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { login } from "./actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PasswordInput } from "@/components/PasswordInput";
+import { login } from "./actions";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
-
-  const [isPending, startTransition] = useTransition();
+  const [identifierType, setIdentifierType] = useState<"email" | "phone">(
+    "email",
+  );
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      usernameOrEmail: "",
+      identifier: "",
       password: "",
     },
   });
 
   async function onSubmit(values: LoginValues) {
     setError(undefined);
-    startTransition(async () => {
-      const { error } = await login(values);
-      if (error) setError(error);
-    });
+    setIsPending(true);
+    try {
+      const result = await login({
+        ...values,
+        identifierType,
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success) {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
@@ -49,19 +68,51 @@ export default function LoginForm() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        <div className="space-y-2">
+          <FormLabel>Sign in with</FormLabel>
+          <RadioGroup
+            defaultValue="email"
+            onValueChange={(value) =>
+              setIdentifierType(value as "email" | "phone")
+            }
+            className="flex space-x-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="email" id="email" />
+              <FormLabel htmlFor="email">Email</FormLabel>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="phone" id="phone" />
+              <FormLabel htmlFor="phone">Phone</FormLabel>
+            </div>
+          </RadioGroup>
+        </div>
+
         <FormField
           control={form.control}
-          name="usernameOrEmail"
+          name="identifier"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username or Email</FormLabel>
+              <FormLabel>
+                {identifierType === "email" ? "Email Address" : "Phone Number"}
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Enter your username or email" {...field} />
+                <Input
+                  type={identifierType === "email" ? "email" : "tel"}
+                  placeholder={
+                    identifierType === "email"
+                      ? "Enter your email"
+                      : "Enter your phone number"
+                  }
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -75,14 +126,15 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Logging in...
+              Signing in...
             </>
           ) : (
-            "Log in"
+            "Sign in"
           )}
         </Button>
       </form>

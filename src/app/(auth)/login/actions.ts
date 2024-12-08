@@ -2,57 +2,39 @@
 
 import { lucia } from "@/auth";
 import prisma from "@/lib/prisma";
-import { loginSchema, LoginValues } from "@/lib/validation";
+import { LoginValues } from "@/lib/validation";
 import { verify } from "@node-rs/argon2";
-import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export async function login(
-  credentials: LoginValues,
-): Promise<{ error: string }> {
+  credentials: LoginValues & { identifierType: "email" | "phone" },
+): Promise<{ error?: string; success?: boolean }> {
   try {
-    const { usernameOrEmail, password } = loginSchema.parse(credentials);
+    const { identifier, password, identifierType } = credentials;
 
-    const existingUser = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [
-          {
-            username: {
-              equals: usernameOrEmail,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              equals: usernameOrEmail,
-              mode: "insensitive",
-            },
-          },
+          { email: identifierType === "email" ? identifier : undefined },
+          { phoneNumber: identifierType === "phone" ? identifier : undefined },
         ],
       },
     });
 
-    if (!existingUser || !existingUser.passwordHash) {
+    if (!user || !user.passwordHash) {
       return {
-        error: "Incorrect username/email or password",
+        error: "Invalid credentials",
       };
     }
 
-    const validPassword = await verify(existingUser.passwordHash, password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
-
+    const validPassword = await verify(user.passwordHash, password);
     if (!validPassword) {
       return {
-        error: "Incorrect username/email or password",
+        error: "Invalid credentials",
       };
     }
 
-    const session = await lucia.createSession(existingUser.id, {});
+    const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(
       sessionCookie.name,
@@ -60,10 +42,9 @@ export async function login(
       sessionCookie.attributes,
     );
 
-    return redirect("/");
+    return { success: true };
   } catch (error) {
-    if (isRedirectError(error)) throw error;
-    console.error(error);
+    console.error("Error in login:", error);
     return {
       error: "Something went wrong. Please try again.",
     };

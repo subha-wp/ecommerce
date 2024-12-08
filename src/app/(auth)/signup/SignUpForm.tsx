@@ -1,7 +1,11 @@
 "use client";
 
-import LoadingButton from "@/components/LoadingButton";
-import { PasswordInput } from "@/components/PasswordInput";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema, type SignUpValues } from "@/lib/validation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -10,74 +14,119 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { signUpSchema, SignUpValues } from "@/lib/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { signUp } from "./actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-// import { Checkbox } from "@/components/ui/checkbox"; //Removed import
-import Link from "next/link";
+import { PasswordInput } from "@/components/PasswordInput";
+import { signUp } from "./actions";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
   const [error, setError] = useState<string>();
-
-  const [isPending, startTransition] = useTransition();
+  const [identifierType, setIdentifierType] = useState<"email" | "phone">(
+    "email",
+  );
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      email: "",
-      username: "",
+      name: "",
+      identifier: "",
       password: "",
     },
   });
 
   async function onSubmit(values: SignUpValues) {
     setError(undefined);
-    startTransition(async () => {
-      const { error } = await signUp(values);
-      if (error) setError(error);
-    });
+    setIsPending(true);
+    try {
+      const result = await signUp({
+        ...values,
+        identifierType,
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success) {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Enter your full name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <div className="space-y-2">
+          <FormLabel>Sign up with</FormLabel>
+          <RadioGroup
+            defaultValue="email"
+            onValueChange={(value) =>
+              setIdentifierType(value as "email" | "phone")
+            }
+            className="flex space-x-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="email" id="email" />
+              <FormLabel htmlFor="email">Email</FormLabel>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="phone" id="phone" />
+              <FormLabel htmlFor="phone">Phone</FormLabel>
+            </div>
+          </RadioGroup>
+        </div>
+
         <FormField
           control={form.control}
-          name="email"
+          name="identifier"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>
+                {identifierType === "email" ? "Email Address" : "Phone Number"}
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Email" type="email" {...field} />
+                <Input
+                  type={identifierType === "email" ? "email" : "tel"}
+                  placeholder={
+                    identifierType === "email"
+                      ? "Enter your email"
+                      : "Enter your 10-digit phone number"
+                  }
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -85,13 +134,13 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} />
+                <PasswordInput placeholder="Create a password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* Removed FormField for termsAccepted */}
+
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Creating account..." : "Create account"}
         </Button>

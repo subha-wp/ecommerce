@@ -2,72 +2,48 @@
 
 import { lucia } from "@/auth";
 import prisma from "@/lib/prisma";
-// import streamServerClient from "@/lib/stream";
-import { signUpSchema, SignUpValues } from "@/lib/validation";
+import { SignUpValues } from "@/lib/validation";
 import { hash } from "@node-rs/argon2";
-import { generateIdFromEntropySize } from "lucia";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { generateId } from "lucia";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export async function signUp(
-  credentials: SignUpValues,
-): Promise<{ error: string }> {
+  credentials: SignUpValues & { identifierType: "email" | "phone" },
+): Promise<{ error?: string; success?: boolean }> {
   try {
-    const { username, email, password } = signUpSchema.parse(credentials);
+    const { name, identifier, password, identifierType } = credentials;
+    const hashedPassword = await hash(password);
+    const userId = generateId(15);
 
-    const passwordHash = await hash(password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
-
-    const userId = generateIdFromEntropySize(10);
-
-    const existingUsername = await prisma.user.findFirst({
+    // Check if user already exists with the given identifier
+    const existingUser = await prisma.user.findFirst({
       where: {
-        username: {
-          equals: username,
-          mode: "insensitive",
-        },
+        OR: [
+          { email: identifierType === "email" ? identifier : undefined },
+          { phoneNumber: identifierType === "phone" ? identifier : undefined },
+        ],
       },
     });
 
-    if (existingUsername) {
+    if (existingUser) {
       return {
-        error: "Username already taken",
+        error: `User with this ${identifierType} already exists`,
       };
     }
 
-    const existingEmail = await prisma.user.findFirst({
-      where: {
-        email: {
-          equals: email,
-          mode: "insensitive",
-        },
+    // Create new user
+    const user = await prisma.user.create({
+      data: {
+        id: userId,
+        username: userId, // Using userId as username for now
+        displayName: name,
+        email: identifierType === "email" ? identifier : null,
+        phoneNumber: identifierType === "phone" ? identifier : null,
+        passwordHash: hashedPassword,
       },
     });
 
-    if (existingEmail) {
-      return {
-        error: "Email already taken",
-      };
-    }
-
-    await prisma.$transaction(async (tx) => {
-      await tx.user.create({
-        data: {
-          id: userId,
-          username,
-          displayName: username,
-          email,
-          passwordHash,
-        },
-      });
-    });
-
-    const session = await lucia.createSession(userId, {});
+    const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(
       sessionCookie.name,
@@ -75,10 +51,9 @@ export async function signUp(
       sessionCookie.attributes,
     );
 
-    return redirect("/");
+    return { success: true };
   } catch (error) {
-    if (isRedirectError(error)) throw error;
-    console.error(error);
+    console.error("Error in signUp:", error);
     return {
       error: "Something went wrong. Please try again.",
     };
