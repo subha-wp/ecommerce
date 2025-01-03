@@ -41,7 +41,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="w-full">
-        <GoogleAnalytics gaId="G-J8ERQE5JMX" />
+        <GoogleAnalytics gaId="G-S6L1WT840G" />
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
