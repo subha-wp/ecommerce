@@ -34,6 +34,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="EyvFuMTDd3xjqQ_1mRBsNW6_6lA7lULeoh3MliYKLjU"
+        />
+      </head>
       <body className="w-full">
         <GoogleAnalytics gaId="G-J8ERQE5JMX" />
         <SessionProvider session={session}>
