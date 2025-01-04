@@ -70,7 +70,7 @@ export async function GET() {
             .join(","),
           "g:availability": "in_stock",
           "g:price": `${product.minPrice} INR`,
-          "g:brand": "JSR TRADERS",
+          "g:brand": "Zaptray",
           "g:condition": "new",
           "g:product_type": `${product.category.name}${product.subcategory ? ` > ${product.subcategory.name}` : ""}`,
           "g:google_product_category": getGoogleProductCategory(
