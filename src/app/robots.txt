@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://zaptray.com/sitemap.xml
+
+# Product Feed
+Allow: /api/merchant-feed
