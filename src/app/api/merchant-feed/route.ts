@@ -69,7 +69,8 @@ export async function GET() {
             .map((img) => img.url)
             .join(","),
           "g:availability": "in_stock",
-          "g:price": `${product.minPrice} INR`,
+          "g:price": `${product.price} INR`,
+          "g:sale_price": `${product.minPrice} INR`,
           "g:brand": "Zaptray",
           "g:condition": "new",
           "g:product_type": `${product.category.name}${product.subcategory ? ` > ${product.subcategory.name}` : ""}`,
