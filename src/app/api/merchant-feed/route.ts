@@ -32,6 +32,8 @@ function getGoogleProductCategory(
     return "5394"; // Baby & Toddler
   } else if (fullCategory.includes("sauces-and-spreads")) {
     return "6202"; // Food, Beverages & Tobacco > Food Items > Condiments & Sauces
+  } else if (fullCategory.includes("sugar-sweetners")) {
+    return "5748"; // Food, Beverages & Tobacco > Food Items > Sweeteners
   }
 
   // Default category if no match is found
