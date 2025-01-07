@@ -5,6 +5,7 @@ import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
 import { Spinner } from "@/components/Spinner";
+import { Badge } from "@/components/ui/badge";
 import ProductReviews from "@/components/ProductReviews";
 import type { Metadata } from "next";
 
@@ -71,9 +72,14 @@ export async function generateMetadata({
     };
   }
 
+  const truncatedDescription =
+    product.description.length > 160
+      ? product.description.substring(0, 157) + "..."
+      : product.description;
+
   return {
     title: product.title,
-    description: product.description,
+    description: truncatedDescription,
     openGraph: {
       title: product.title,
       description: product.description,
