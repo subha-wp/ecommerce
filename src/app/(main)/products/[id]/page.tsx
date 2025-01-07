@@ -6,6 +6,7 @@ import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
+import ProductReviews from "@/components/ProductReviews";
 
 const ProductDetails = dynamic(() => import("./ProductDetails"), {
   loading: () => <Spinner />,
@@ -46,6 +47,11 @@ export default async function ProductPage({
           categoryId={product.category.id}
           subcategoryId={product.subcategory?.id}
         />
+      </Suspense>
+      <Suspense fallback={<Spinner />}>
+        <div className="mt-5">
+          <ProductReviews productId={product.id} />
+        </div>
       </Suspense>
     </div>
   );

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import ProductImageGallery from "./ProductImageGallery";
 import { Badge } from "@/components/ui/badge";
-
+import ProductReviews from "@/components/ProductReviews";
 type Product = {
   id: string;
   title: string;
