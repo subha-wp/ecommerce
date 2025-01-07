@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import ProductImageGallery from "./ProductImageGallery";
 import { Badge } from "@/components/ui/badge";
 import ProductReviews from "@/components/ProductReviews";
 import { StarRating } from "@/components/StarRating";
+
 type Product = {
   id: string;
   title: string;
@@ -19,6 +20,7 @@ type Product = {
   sizes: string[];
   images: any;
 };
+
 type Rating = {
   averageRating: number;
   totalReviews: number;
@@ -117,79 +119,92 @@ export default function ProductDetails({
   }, [product.id]);
 
   return (
-    <div className="relative z-0 md:pb-0">
-      <ProductImageGallery
-        images={product.images}
-        isFavorite={isFavorite}
-        onToggleFavorite={handleToggleFavorite}
-        onShare={handleShare}
-      />
-      <div className="mb-4 mt-6 flex items-center justify-between">
-        <label htmlFor="quantity" className="block text-sm font-medium">
-          Quantity:
-        </label>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-          >
-            -
-          </Button>
-          <Input
-            id="quantity"
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) =>
-              setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-            }
-            className="w-16 text-center"
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setQuantity(quantity + 1)}
-          >
-            +
-          </Button>
-        </div>
+    <div className="relative z-0 md:flex md:gap-8 md:pb-0">
+      <div className="md:w-1/2">
+        <ProductImageGallery
+          images={product.images}
+          isFavorite={isFavorite}
+          onToggleFavorite={handleToggleFavorite}
+          onShare={handleShare}
+        />
       </div>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-sm font-bold">{product.title}</h1>
-        <div className="mb-4">
-          <StarRating
-            rating={rating.averageRating}
-            totalReviews={rating.totalReviews}
-            size="lg"
-          />
+      <div className="md:w-1/2">
+        <div className="flex flex-col gap-4 md:mt-0">
+          <h1 className="text-2xl font-bold md:text-3xl">{product.title}</h1>
+          <div className="mb-4">
+            <StarRating
+              rating={rating.averageRating}
+              totalReviews={rating.totalReviews}
+              size="lg"
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xl font-semibold md:text-2xl">
+              ₹{product.minPrice.toFixed(2)}
+            </p>
+            <p className="font-semibold text-gray-400 line-through">
+              ₹{product.price.toFixed(2)}
+            </p>
+            <Badge className="text-sm font-semibold">
+              {discountPercentage}% off
+            </Badge>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="font-semibold text-gray-400 line-through">
-            ₹{product.price.toFixed(2)}
-          </p>
-          <p className="text-xl font-semibold">
-            ₹{product.minPrice.toFixed(2)}
-          </p>
-          <Badge className="text-sm font-semibold">
-            {discountPercentage}% off
-          </Badge>
-        </div>
-      </div>
 
-      <div className="mt-2 flex space-x-4">
-        <Button onClick={handleAddToCart} className="flex-1">
-          Add to Cart
-        </Button>
-        <Button onClick={handleBuyNow} variant="secondary" className="flex-1">
-          Buy Now
-        </Button>
-      </div>
-      <div className="py-4">
-        <p className="mb-2 font-bold">Description</p>
-        <p className="text-sm text-gray-600 sm:text-base">
-          {product.description}
-        </p>
+        <div className="mb-4 mt-6 flex items-center justify-between md:mt-8">
+          <label
+            htmlFor="quantity"
+            className="block text-sm font-medium md:text-base"
+          >
+            Quantity:
+          </label>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            >
+              -
+            </Button>
+            <Input
+              id="quantity"
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) =>
+                setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+              }
+              className="w-16 text-center"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setQuantity(quantity + 1)}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-4 flex space-x-4 md:mt-6">
+          <Button onClick={handleAddToCart} className="flex-1 md:text-lg">
+            Add to Cart
+          </Button>
+          <Button
+            onClick={handleBuyNow}
+            variant="secondary"
+            className="flex-1 md:text-lg"
+          >
+            Buy Now
+          </Button>
+        </div>
+
+        <div className="py-4 md:mt-8">
+          <p className="mb-2 text-lg font-bold md:text-xl">Description</p>
+          <p className="text-sm text-gray-600 sm:text-base md:text-lg">
+            {product.description}
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -5,8 +5,8 @@ import { getProductById } from "@/lib/products";
 import { getUserFavorites } from "@/lib/favorites";
 import { validateRequest } from "@/auth";
 import { Spinner } from "@/components/Spinner";
-import { Badge } from "@/components/ui/badge";
 import ProductReviews from "@/components/ProductReviews";
+import type { Metadata } from "next";
 
 const ProductDetails = dynamic(() => import("./ProductDetails"), {
   loading: () => <Spinner />,
@@ -36,7 +36,7 @@ export default async function ProductPage({
 
   return (
     <div className="container mx-auto mb-10 max-w-7xl px-2 py-4 sm:py-8">
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-1">
         <Suspense fallback={<Spinner />}>
           <ProductDetails product={product} initialIsFavorite={isFavorite} />
         </Suspense>
@@ -57,7 +57,11 @@ export default async function ProductPage({
   );
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   const product = await getProductById(params.id);
 
   if (!product) {
@@ -70,5 +74,41 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
     title: product.title,
     description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      images: [
+        {
+          url: product.images[0].url,
+          width: 800,
+          height: 600,
+          alt: product.title,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.description,
+      images: [product.images[0].url],
+    },
+    icons: {
+      icon: "/favicon.ico",
+      apple: "/apple-icon.png",
+    },
+    other: {
+      "product:price:amount": product.minPrice.toString(),
+      "product:price:currency": "INR",
+      "product:availability": "in stock",
+      "product:condition": "new",
+      "product:brand": "Zaptray",
+    },
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000",
+    ),
+    alternates: {
+      canonical: `/product/${product.id}`,
+    },
   };
 }
