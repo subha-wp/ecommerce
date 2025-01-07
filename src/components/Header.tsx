@@ -120,9 +120,6 @@ export default function Header({ user }: any) {
                     </Link>
                   ))}
                 </div>
-                <SheetFooter>
-                  <p>Hello</p>
-                </SheetFooter>
               </SheetContent>
             </Sheet>
           </div>
