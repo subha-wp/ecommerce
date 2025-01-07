@@ -16,8 +16,8 @@ const CancellationPolicy = () => {
       <h2 className="mb-2 text-2xl font-bold">How to Cancel</h2>
       <p className="mb-4">
         To initiate a cancellation, please contact us at{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>{" "}
         with your order details.
       </p>
@@ -37,8 +37,8 @@ const CancellationPolicy = () => {
       <p>
         For any questions regarding our Cancellation Policy, please contact us
         at{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>
         .
       </p>

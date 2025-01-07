@@ -35,8 +35,8 @@ const ShippingPolicy = () => {
       <p className="mb-4">
         If your item is lost or damaged during shipping, please contact us
         immediately at{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>{" "}
         for assistance.
       </p>

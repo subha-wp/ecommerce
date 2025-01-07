@@ -38,8 +38,8 @@ const PrivacyPolicy = () => {
       <p className="mb-4">
         You can request the deletion of your personal data by sending an email
         to{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>
         .
       </p>

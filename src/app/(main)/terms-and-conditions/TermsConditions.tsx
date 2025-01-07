@@ -1,6 +1,6 @@
 const TermsConditions = () => {
   return (
-    <div className="container mx-auto max-w-7xl p-6">
+    <div className="container mx-auto mb-20 max-w-7xl p-6">
       <h1 className="mb-4 text-3xl font-bold">Terms and Conditions</h1>
       <p className="mb-4">
         Welcome to ZapTray, operated by JSR TRADERS. By accessing or using our
@@ -66,8 +66,8 @@ const TermsConditions = () => {
 
       <p>
         If you have any questions about these terms, please contact us at{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>
         .
       </p>

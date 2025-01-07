@@ -13,7 +13,7 @@ const ContactUs = () => {
         <p className="mb-2">
           <strong>Email:</strong>{" "}
           <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-            connect@jsrtraders.co.in
+            connect@zaptray.com
           </a>
         </p>
         <p className="mb-2">

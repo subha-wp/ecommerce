@@ -39,8 +39,8 @@ const ReturnRefundPolicy = () => {
       <p>
         If you have any questions regarding our Return and Refund Policy, please
         contact us at{" "}
-        <a href="mailto:connect@jsrtraders.co.in" className="text-blue-500">
-          connect@jsrtraders.co.in
+        <a href="mailto:connect@zaptray.com" className="text-blue-500">
+          connect@zaptray.com
         </a>
         .
       </p>
