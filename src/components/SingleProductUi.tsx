@@ -1,20 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import AddToCartButton from "./AddToCartButton";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import noImage from "@/assets/Image_not_available.png";
 import { Badge } from "./ui/badge";
+import { StarRating } from "./StarRating";
 
 export default function SingleProductUi({ product }: any) {
+  type Rating = {
+    averageRating: number;
+    totalReviews: number;
+  };
+
   const productThumnail = product.images[0]?.url;
+  const [rating, setRating] = useState<Rating>({
+    averageRating: 0,
+    totalReviews: 0,
+  });
 
   // Calculate discount percentage
   const discountPercentage = Math.round(
     ((product.price - product.minPrice) / product.price) * 100,
   );
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await fetch(`/api/products/${product.id}/rating`);
+        if (response.ok) {
+          const data = await response.json();
+          setRating(data);
+        }
+      } catch (error) {
+        console.error("Error fetching rating:", error);
+      }
+    };
+
+    fetchRating();
+  }, [product.id]);
 
   return (
     <>
@@ -42,6 +68,13 @@ export default function SingleProductUi({ product }: any) {
         <h2 className="mb-2 line-clamp-2 text-xs font-semibold">
           {product.title}
         </h2>
+        <div className="mb-2">
+          <StarRating
+            rating={rating.averageRating}
+            totalReviews={rating.totalReviews}
+            size="sm"
+          />
+        </div>
         <div className="my-1 flex items-center justify-between rounded-md border border-primary p-1">
           <div className="flex items-center gap-2">
             <p className="font-semibold text-muted-foreground line-through">

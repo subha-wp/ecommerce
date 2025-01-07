@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProductImageGallery from "./ProductImageGallery";
 import { Badge } from "@/components/ui/badge";
 import ProductReviews from "@/components/ProductReviews";
+import { StarRating } from "@/components/StarRating";
 type Product = {
   id: string;
   title: string;
@@ -17,6 +18,10 @@ type Product = {
   minPrice: number;
   sizes: string[];
   images: any;
+};
+type Rating = {
+  averageRating: number;
+  totalReviews: number;
 };
 
 export default function ProductDetails({
@@ -31,6 +36,10 @@ export default function ProductDetails({
   const { addToCart } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [rating, setRating] = useState<Rating>({
+    averageRating: 0,
+    totalReviews: 0,
+  });
 
   const handleAddToCart = () => {
     addToCart({ ...product, quantity, size: selectedSize });
@@ -91,6 +100,22 @@ export default function ProductDetails({
     });
   };
 
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await fetch(`/api/products/${product.id}/rating`);
+        if (response.ok) {
+          const data = await response.json();
+          setRating(data);
+        }
+      } catch (error) {
+        console.error("Error fetching rating:", error);
+      }
+    };
+
+    fetchRating();
+  }, [product.id]);
+
   return (
     <div className="relative z-0 md:pb-0">
       <ProductImageGallery
@@ -132,6 +157,13 @@ export default function ProductDetails({
       </div>
       <div className="flex flex-col gap-4">
         <h1 className="text-sm font-bold">{product.title}</h1>
+        <div className="mb-4">
+          <StarRating
+            rating={rating.averageRating}
+            totalReviews={rating.totalReviews}
+            size="lg"
+          />
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-semibold text-gray-400 line-through">
             ₹{product.price.toFixed(2)}

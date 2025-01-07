@@ -144,3 +144,28 @@ export async function getFeaturedProducts(limit?: number) {
     throw new Error("Failed to fetch featured products");
   }
 }
+
+// Add this function to get product rating
+export async function getProductRating(productId: string) {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: { productId },
+      select: { rating: true },
+    });
+
+    if (reviews.length === 0) {
+      return { averageRating: 0, totalReviews: 0 };
+    }
+
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalRating / reviews.length;
+
+    return {
+      averageRating,
+      totalReviews: reviews.length,
+    };
+  } catch (error) {
+    console.error("Error fetching product rating:", error);
+    return { averageRating: 0, totalReviews: 0 };
+  }
+}
