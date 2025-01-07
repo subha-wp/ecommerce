@@ -2,12 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ShoppingCart, User, Search } from "lucide-react";
+import { ShoppingCart, User, Search, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Header({ user }: any) {
   const [isSticky, setIsSticky] = useState(false);
@@ -47,11 +55,18 @@ export default function Header({ user }: any) {
     }
   };
 
+  const menuItems = [
+    { href: "/contact", label: "Contact Us" },
+    { href: "/privacy-policy", label: "Privacy Policy" },
+    { href: "/terms-and-conditions", label: "Terms & Conditions" },
+    { href: "/shipping-policy", label: "Shipping Policy" },
+    { href: "/return-refund-policy", label: "Return & Refund Policy" },
+    { href: "/cancellation-policy", label: "Cancellation Policy" },
+  ];
+
   return (
     <header
-      className={`z-50 bg-gradient-to-r from-green-50 to-green-100 shadow-sm transition-all duration-300 ${
-        isSticky ? "sticky top-0" : ""
-      } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+      className={`z-50 bg-gradient-to-r from-green-50 to-green-100 shadow-sm transition-all duration-300 ${isSticky ? "sticky top-0" : ""} ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
       <div className="container mx-auto max-w-7xl px-4 py-2 sm:py-4">
         <div className="flex w-full items-center justify-between">
@@ -83,6 +98,33 @@ export default function Header({ user }: any) {
                 <User className="h-6 w-6 text-green-600" />
               </Link>
             )}
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreVertical className="h-5 w-5 text-green-600" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="bg-white">
+                <SheetHeader>
+                  <SheetTitle>Important Links</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 flex flex-col space-y-4">
+                  {menuItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+                <SheetFooter>
+                  <p>Hello</p>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
         <form onSubmit={handleSearch} className="mt-2 flex w-full">

@@ -17,7 +17,7 @@ const ContactUs = () => {
           </a>
         </p>
         <p className="mb-2">
-          <strong>Phone:</strong> +91-3174314376
+          <strong>Phone:</strong> +91-8927203711
         </p>
         <p className="mb-2">
           <strong>Address:</strong>

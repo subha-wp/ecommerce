@@ -21,7 +21,6 @@ export default async function Layout({
         <div className="mx-auto mb-6 flex w-full grow gap-5">{children}</div>
       </div>
       <BottomNav />
-      {/* <Footer/> */}
       <Toaster />
     </CartProvider>
   );
