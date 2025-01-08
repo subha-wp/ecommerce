@@ -22,25 +22,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
 import { trackFacebookEvent } from "@/components/FacebookPixel";
+import AddressForm from "@/app/(main)/user/account/AddressForm";
 
-const DELIVERY_CHARGE = 15; // Fixed delivery charge
-
-const fixedButtonStyle = `
-  @media (max-width: 768px) {
-    .fixed-bottom-button {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 1rem;
-      background-color: white;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    }
-  }
-`;
+const DELIVERY_CHARGE = 15;
 
 type Address = {
   id: string;
@@ -56,7 +49,7 @@ type Address = {
 
 export default function CheckoutForm({
   user,
-  addresses,
+  addresses: initialAddresses,
 }: {
   user: any;
   addresses: Address[];
@@ -65,13 +58,26 @@ export default function CheckoutForm({
   const { toast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMode, setPaymentMode] = useState("COD");
-  const [subtotal, setSubtotal] = useState(() =>
-    cart.reduce((acc, item) => acc + item.minPrice * item.quantity, 0),
-  );
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [addresses, setAddresses] = useState(initialAddresses);
   const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
 
+  const subtotal = cart.reduce(
+    (acc, item) => acc + item.minPrice * item.quantity,
+    0,
+  );
   const totalAmount = subtotal + DELIVERY_CHARGE;
+
+  const handleAddAddress = (newAddress: Address) => {
+    setAddresses([...addresses, newAddress]);
+    setSelectedAddressId(newAddress.id);
+    setIsAddressDialogOpen(false);
+    toast({
+      title: "Address Added",
+      description: "Your new address has been added successfully.",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,34 +132,31 @@ export default function CheckoutForm({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to initiate payment");
+        throw new Error("Failed to initiate payment");
       }
 
       const { paymentLink, sessionId } = await response.json();
 
-      if (!paymentLink) {
-        throw new Error("No payment link received");
-      }
       const cashfree = await load({
         mode: "production",
       });
-      let checkoutOptions = {
-        paymentSessionId: sessionId,
-        redirectTarget: "_modal",
-      };
-      cashfree.checkout(checkoutOptions).then((res) => {
-        console.log("payment initialized");
-        trackFacebookEvent("Purchase", {
-          content_type: "product",
-          contents: cart.map((item) => ({
-            id: item.id,
-            quantity: item.quantity,
-          })),
-          currency: "INR",
-          value: totalAmount,
+
+      cashfree
+        .checkout({
+          paymentSessionId: sessionId,
+          redirectTarget: "_modal",
+        })
+        .then(() => {
+          trackFacebookEvent("Purchase", {
+            content_type: "product",
+            contents: cart.map((item) => ({
+              id: item.id,
+              quantity: item.quantity,
+            })),
+            currency: "INR",
+            value: totalAmount,
+          });
         });
-      });
     } catch (error) {
       console.error("Payment initiation error:", error);
       toast({
@@ -210,8 +213,7 @@ export default function CheckoutForm({
       console.error("Error creating order:", error);
       toast({
         title: "Error",
-        description:
-          "There was an error processing your order. Please try again.",
+        description: "Failed to create order. Please try again.",
         variant: "destructive",
       });
     }
@@ -229,26 +231,43 @@ export default function CheckoutForm({
             Select where you want your order delivered
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Select
-            value={selectedAddressId}
-            onValueChange={(value) => setSelectedAddressId(value)}
+        <CardContent className="space-y-4">
+          {addresses.length > 0 ? (
+            <Select
+              value={selectedAddressId}
+              onValueChange={setSelectedAddressId}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Choose delivery address" />
+              </SelectTrigger>
+              <SelectContent>
+                {addresses.map((address) => (
+                  <SelectItem key={address.id} value={address.id}>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">{address.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {address.addressLine1}, {address.city}, {address.state}{" "}
+                        - {address.zipCode}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No addresses saved yet
+            </p>
+          )}
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => setIsAddressDialogOpen(true)}
           >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select an address" />
-            </SelectTrigger>
-            <SelectContent className="w-full min-w-[250px]">
-              {addresses.map((address) => (
-                <SelectItem key={address.id} value={address.id}>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">
-                      {address.addressLine1},{address.zipCode}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            + Add New Address
+          </Button>
         </CardContent>
       </Card>
 
@@ -298,21 +317,29 @@ export default function CheckoutForm({
         </CardContent>
       </Card>
 
-      <style>{fixedButtonStyle}</style>
-      <div className="mt-2">
-        <Button type="submit" className="w-full" disabled={isProcessing}>
-          {isProcessing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
-          ) : paymentMode === "ONLINE" ? (
-            "Proceed to Pay"
-          ) : (
-            "Place Order"
-          )}
-        </Button>
-      </div>
+      <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Add New Address</DialogTitle>
+          </DialogHeader>
+          <AddressForm
+            userId={user.id}
+            onAddAddress={handleAddAddress}
+            onCancel={() => setIsAddressDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Button type="submit" className="w-full" disabled={isProcessing}>
+        {isProcessing ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processing...
+          </>
+        ) : (
+          `Place Order - ₹${totalAmount.toFixed(2)}`
+        )}
+      </Button>
     </form>
   );
 }
