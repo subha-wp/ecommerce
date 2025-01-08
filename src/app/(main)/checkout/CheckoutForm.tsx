@@ -245,7 +245,7 @@ export default function CheckoutForm({
                   <SelectItem key={address.id} value={address.id}>
                     <div className="flex flex-col gap-1">
                       <span className="font-medium">{address.name}</span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="max-w-[250px] text-sm text-muted-foreground">
                         {address.addressLine1}, {address.city}, {address.state}{" "}
                         - {address.zipCode}
                       </span>
