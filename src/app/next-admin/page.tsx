@@ -4,13 +4,41 @@ import { RecentOrders } from "@/components/admin/RecentOrders";
 import { SalesChart } from "@/components/admin/SalesChart";
 import { TopProducts } from "@/components/admin/TopProducts";
 import { DollarSign, Users, Package, ShoppingBag } from "lucide-react";
+import prisma from "@/lib/prisma";
+
+async function getDashboardStats() {
+  try {
+    const [totalCustomers, totalProducts, totalOrders, totalRevenue] =
+      await Promise.all([
+        prisma.user.count(),
+        prisma.product.count(),
+        prisma.order.count(),
+        prisma.order.aggregate({
+          _sum: {
+            totalAmount: true,
+          },
+        }),
+      ]);
+
+    return {
+      totalCustomers,
+      totalProducts,
+      totalOrders,
+      totalRevenue: totalRevenue._sum.totalAmount || 0,
+    };
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    return {
+      totalCustomers: 0,
+      totalProducts: 0,
+      totalOrders: 0,
+      totalRevenue: 0,
+    };
+  }
+}
 
 export default async function AdminDashboard() {
-  // Fetch summary data
-  const totalRevenue = 15420.5; // Replace with actual API call
-  const totalCustomers = 324; // Replace with actual API call
-  const totalProducts = 145; // Replace with actual API call
-  const totalOrders = 56; // Replace with actual API call
+  const stats = await getDashboardStats();
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
@@ -24,7 +52,9 @@ export default async function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">
+              ₹{stats.totalRevenue.toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>
@@ -38,7 +68,7 @@ export default async function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{totalCustomers}</div>
+            <div className="text-2xl font-bold">+{stats.totalCustomers}</div>
             <p className="text-xs text-muted-foreground">
               +180.1% from last month
             </p>
@@ -52,7 +82,7 @@ export default async function AdminDashboard() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
+            <div className="text-2xl font-bold">{stats.totalProducts}</div>
             <p className="text-xs text-muted-foreground">+7 since last hour</p>
           </CardContent>
         </Card>
@@ -62,7 +92,7 @@ export default async function AdminDashboard() {
             <ShoppingBag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalOrders}</div>
+            <div className="text-2xl font-bold">{stats.totalOrders}</div>
             <p className="text-xs text-muted-foreground">+12 since yesterday</p>
           </CardContent>
         </Card>
