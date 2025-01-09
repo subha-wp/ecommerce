@@ -113,6 +113,7 @@ function getGoogleProductCategory(
     return "6202"; // Condiments & Sauces
   if (fullCategory.includes("honey & chyawanprash")) return "5748"; // Sweeteners
   if (fullCategory.includes("chocolate")) return "434"; // Candy & Chocolate
+  if (fullCategory.includes("candy")) return "434"; // Candy & Chocolate
   if (fullCategory.includes("jaggery")) return "5748"; // Sweeteners
 
   // Default category if no match is found
