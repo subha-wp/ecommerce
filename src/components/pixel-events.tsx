@@ -7,10 +7,15 @@ export const FacebookPixelEvents: React.FC = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    // Skip tracking for admin routes
+    if (pathname.startsWith("/next-admin")) {
+      return;
+    }
+
     import("react-facebook-pixel")
       .then((x) => x.default)
       .then((ReactPixel) => {
-        ReactPixel.init("753724590272379"); //don't forget to change this
+        ReactPixel.init("753724590272379");
         ReactPixel.pageView();
       });
   }, [pathname, searchParams]);

@@ -8,6 +8,7 @@ import { validateRequest } from "@/auth";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Suspense } from "react";
 import { FacebookPixelEvents } from "@/components/pixel-events";
+import { headers } from "next/headers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +32,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await validateRequest();
+  const headersList = headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isAdminRoute = pathname.startsWith("/next-admin");
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -41,7 +45,14 @@ export default async function RootLayout({
         />
       </head>
       <body className="w-full">
-        <GoogleAnalytics gaId="G-S6L1WT840G" />
+        {!isAdminRoute && (
+          <>
+            <GoogleAnalytics gaId="G-S6L1WT840G" />
+            <Suspense fallback={null}>
+              <FacebookPixelEvents />
+            </Suspense>
+          </>
+        )}
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
@@ -50,9 +61,6 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <Suspense fallback={null}>
-              <FacebookPixelEvents />
-            </Suspense>
           </ThemeProvider>
         </SessionProvider>
       </body>
