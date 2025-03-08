@@ -1,8 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /next-admin/
+Disallow: /login
+Disallow: /signup
 
-# Sitemap
-Sitemap: https://zaptray.com/sitemap.xml
+# Sitemaps
+Sitemap: https://yourdomain.com/sitemap.xml
 
-# Product Feed
-Allow: /api/merchant-feed
+# Crawl-delay
+Crawl-delay: 10

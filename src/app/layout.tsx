@@ -22,8 +22,43 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Zaptray",
-  description: "Ab Wholesale hua Asaan",
+  title: "Zaptray - Ab Wholesale hua Asaan",
+  description:
+    "Discover wholesale prices on a wide range of products. Zaptray makes wholesale shopping easy and accessible for everyone.",
+  keywords:
+    "wholesale, online shopping, bulk purchase, retail, Indian marketplace",
+  authors: [{ name: "Zaptray" }],
+  creator: "Zaptray",
+  publisher: "Zaptray",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://zaptray.com"),
+  openGraph: {
+    title: "Zaptray - Ab Wholesale hua Asaan",
+    description:
+      "Discover wholesale prices on a wide range of products. Zaptray makes wholesale shopping easy and accessible for everyone.",
+    url: "https://zaptray.com",
+    siteName: "Zaptray",
+    locale: "en_US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "EyvFuMTDd3xjqQ_1mRBsNW6_6lA7lULeoh3MliYKLjU",
+  },
 };
 
 export default async function RootLayout({
@@ -43,6 +78,7 @@ export default async function RootLayout({
           name="google-site-verification"
           content="EyvFuMTDd3xjqQ_1mRBsNW6_6lA7lULeoh3MliYKLjU"
         />
+        <link rel="canonical" href="https://yourdomain.com" />
       </head>
       <body className="w-full">
         {!isAdminRoute && (
