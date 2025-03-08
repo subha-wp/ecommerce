@@ -47,7 +47,7 @@ export default async function RootLayout({
       <body className="w-full">
         {!isAdminRoute && (
           <>
-            <GoogleAnalytics gaId="G-S6L1WT840G" />
+            <GoogleAnalytics gaId="G-J8ERQE5JMX" />
             <Suspense fallback={null}>
               <FacebookPixelEvents />
             </Suspense>
